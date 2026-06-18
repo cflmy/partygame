@@ -5,7 +5,7 @@
  */
 
 return [
-    'app_name' => 'PartyGame',
+    'app_name' => '暮云聚会游戏',
     'debug'    => false,
     'base_url' => 'https://partygame.cflmy.cn',
 ];

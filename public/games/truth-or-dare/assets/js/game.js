@@ -76,9 +76,9 @@
     els.playerList.innerHTML = '';
     state.players.forEach((name, index) => {
       const chip = document.createElement('span');
-      chip.className = 'tod-chip';
-      chip.innerHTML = `<span>${escapeHtml(name)}</span><button type="button" class="tod-chip__remove" aria-label="移除 ${escapeHtml(name)}">×</button>`;
-      chip.querySelector('.tod-chip__remove').addEventListener('click', () => {
+      chip.className = 'game-chip';
+      chip.innerHTML = `<span>${escapeHtml(name)}</span><button type="button" class="game-chip__remove" aria-label="移除 ${escapeHtml(name)}">×</button>`;
+      chip.querySelector('.game-chip__remove').addEventListener('click', () => {
         state.players.splice(index, 1);
         saveState();
         renderPlayers();
@@ -88,7 +88,7 @@
   }
 
   function renderLevelButtons() {
-    els.levelGroup.querySelectorAll('.tod-level-btn').forEach((btn) => {
+    els.levelGroup.querySelectorAll('.game-level-btn').forEach((btn) => {
       btn.classList.toggle('is-active', btn.dataset.level === state.level);
     });
   }
@@ -149,20 +149,20 @@
   }
 
   async function reveal(type) {
-    document.body.classList.add('tod-loading');
+    document.body.classList.add('is-loading');
     try {
       const text = await fetchQuestion(type);
       state.currentType = type;
       state.currentText = text;
       els.revealBadge.textContent = type === 'truth' ? '真心话' : '大冒险';
-      els.revealBadge.className = `tod-reveal__badge tod-reveal__badge--${type}`;
+      els.revealBadge.className = `game-reveal__badge game-reveal__badge--${type}`;
       els.revealText.textContent = text;
       els.revealPlayer.textContent = `${state.currentPlayer}，请诚实回答或完成挑战`;
       showPanel('reveal');
     } catch (_) {
       window.alert('题目加载失败，请稍后重试。');
     } finally {
-      document.body.classList.remove('tod-loading');
+      document.body.classList.remove('is-loading');
     }
   }
 
@@ -188,7 +188,7 @@
     });
 
     els.levelGroup.addEventListener('click', (event) => {
-      const btn = event.target.closest('.tod-level-btn');
+      const btn = event.target.closest('.game-level-btn');
       if (!btn) return;
       state.level = btn.dataset.level;
       saveState();
