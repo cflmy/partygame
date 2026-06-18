@@ -1,0 +1,147 @@
+/* 你宁愿 — 游戏页样式 */
+
+.wyr-vs-label {
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  margin-bottom: 0.85rem;
+}
+
+.wyr-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.wyr-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 9.5rem;
+  padding: 1.1rem 0.85rem;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.wyr-choice:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.wyr-choice--a {
+  background: linear-gradient(135deg, #e7f5ff, #fff);
+  border-color: #c5e4ff;
+}
+
+.wyr-choice--b {
+  background: linear-gradient(135deg, #fff4e6, #fff);
+  border-color: #ffd8a8;
+}
+
+.wyr-choice__badge {
+  display: inline-block;
+  margin-bottom: 0.55rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.wyr-choice--a .wyr-choice__badge {
+  background: linear-gradient(135deg, #4dabf7, #74c0fc);
+}
+
+.wyr-choice--b .wyr-choice__badge {
+  background: linear-gradient(135deg, #ff922b, #ffc078);
+}
+
+.wyr-choice__text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.wyr-votes {
+  max-width: 28rem;
+  margin: 0 auto 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.wyr-votes__title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.65rem;
+  text-align: center;
+}
+
+.wyr-votes__bar {
+  display: flex;
+  height: 0.55rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f1f3f5;
+  margin-bottom: 0.55rem;
+}
+
+.wyr-votes__bar-a {
+  background: linear-gradient(90deg, #4dabf7, #74c0fc);
+  transition: width 0.3s ease;
+}
+
+.wyr-votes__bar-b {
+  background: linear-gradient(90deg, #ff922b, #ffc078);
+  transition: width 0.3s ease;
+}
+
+.wyr-votes__counts {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--text-soft);
+}
+
+.wyr-votes__counts strong {
+  color: var(--text);
+}
+
+.wyr-round-hint {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  margin-bottom: 0.85rem;
+  line-height: 1.55;
+}
+
+body.is-loading .game-stage {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .wyr-choice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wyr-choice,
+  .wyr-votes__bar-a,
+  .wyr-votes__bar-b {
+    transition: none;
+  }
+}

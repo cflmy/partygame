@@ -15,7 +15,7 @@ pg_render_header('即开即玩的聚会小游戏 · 返回 <a href="https://www.
         <div class="info-icon">🎲</div>
         <div>
             <h3>游戏类型</h3>
-            <p><strong>聚会破冰</strong><br>真心话大冒险、从来没有已上线，更多玩法持续更新</p>
+            <p><strong>聚会破冰</strong><br>真心话大冒险、从来没有、你宁愿已上线，更多玩法持续更新</p>
         </div>
     </div>
     <div class="info-card card">
@@ -55,6 +55,12 @@ pg_render_header('即开即玩的聚会小游戏 · 返回 <a href="https://www.
             <div class="game-card__icon game-card__icon--green">没</div>
             <h3 class="game-card__title">从来没有</h3>
             <p class="game-card__desc">做过就放下手指：随机陈述，记录手指数，先放完者接受惩罚。</p>
+            <span class="game-card__cta">开始游戏</span>
+        </a>
+        <a class="game-card" href="/games/would-you-rather/">
+            <div class="game-card__icon game-card__icon--blue">宁</div>
+            <h3 class="game-card__title">你宁愿</h3>
+            <p class="game-card__desc">两难选择题：选 A 还是 B？投票统计，看看大家怎么选。</p>
             <span class="game-card__cta">开始游戏</span>
         </a>
     </div>
