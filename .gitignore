@@ -1,7 +1,11 @@
 # Environment
 .env
 .env.*
+.env.deploy
 config/config.php
+
+# FTP deploy secrets
+scripts/.env.deploy
 
 # OS
 .DS_Store
