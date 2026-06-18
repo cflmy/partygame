@@ -176,6 +176,30 @@ function nhie_room_handle_action(string $action, array $query): void
             $room['statement'] = $q['text'] ?? '从来没有…';
             return ['ok' => true];
         }
+        if ($action === 'room_swap') {
+            if (($room['phase'] ?? '') !== 'play') {
+                return ['error' => 'not in play'];
+            }
+            $q = nhie_pick_statement($room['level'] ?? 'normal', $room['statement'] ?? null);
+            $room['statement'] = $q['text'] ?? '从来没有…';
+            return ['ok' => true];
+        }
+        if ($action === 'room_back') {
+            if (($room['phase'] ?? '') !== 'play') {
+                return ['error' => 'cannot go back'];
+            }
+            $room['phase'] = 'lobby';
+            $room['statement'] = '';
+            $room['round'] = 1;
+            return ['ok' => true];
+        }
+        if ($action === 'room_set_level') {
+            if (($room['phase'] ?? '') !== 'lobby') {
+                return ['error' => 'lobby only'];
+            }
+            $room['level'] = nhie_normalize_level((string) ($query['level'] ?? 'normal'));
+            return ['ok' => true];
+        }
         return ['error' => 'invalid action'];
     });
 

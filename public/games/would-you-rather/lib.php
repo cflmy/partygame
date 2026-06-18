@@ -74,17 +74,27 @@ function wyr_room_public_state(array $room, ?array $me): array
     $countA = 0;
     $countB = 0;
     foreach ($votes as $choice) {
-        if ($choice === 'a') $countA++;
-        if ($choice === 'b') $countB++;
+        if ($choice === 'a') {
+            $countA++;
+        }
+        if ($choice === 'b') {
+            $countB++;
+        }
     }
 
+    $playerCount = count($room['players'] ?? []);
+    $votesCast = count($votes);
+
     return array_merge(pg_room_base_state($room), [
-        'option_a'   => $room['option_a'] ?? '',
-        'option_b'   => $room['option_b'] ?? '',
-        'votes_a'    => $countA,
-        'votes_b'    => $countB,
-        'my_vote'    => ($me && !empty($me['is_spectator'])) ? null : ($votes[$me['id'] ?? ''] ?? null),
-        'me'         => pg_room_me_payload($me),
+        'option_a'    => $room['option_a'] ?? '',
+        'option_b'    => $room['option_b'] ?? '',
+        'votes_a'     => $countA,
+        'votes_b'     => $countB,
+        'votes_cast'  => $votesCast,
+        'vote_total'  => $playerCount,
+        'all_voted'   => $playerCount > 0 && $votesCast >= $playerCount,
+        'my_vote'     => ($me && !empty($me['is_spectator'])) ? null : ($votes[$me['id'] ?? ''] ?? null),
+        'me'          => pg_room_me_payload($me),
     ]);
 }
 
@@ -221,6 +231,59 @@ function wyr_room_handle_action(string $action, array $query): void
             ]));
             $room['option_a'] = $q['option_a'] ?? '';
             $room['option_b'] = $q['option_b'] ?? '';
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_swap') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            if (($room['phase'] ?? '') !== 'play') {
+                return ['error' => 'not in play'];
+            }
+            $room['votes'] = [];
+            $q = wyr_pick_question($room['level'] ?? 'normal', wyr_question_key([
+                'option_a' => $room['option_a'] ?? '',
+                'option_b' => $room['option_b'] ?? '',
+            ]));
+            $room['option_a'] = $q['option_a'] ?? '';
+            $room['option_b'] = $q['option_b'] ?? '';
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_reset_votes') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            if (($room['phase'] ?? '') !== 'play') {
+                return ['error' => 'not in play'];
+            }
+            $room['votes'] = [];
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_back') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            if (($room['phase'] ?? '') !== 'play') {
+                return ['error' => 'cannot go back'];
+            }
+            $room['phase'] = 'lobby';
+            $room['option_a'] = '';
+            $room['option_b'] = '';
+            $room['votes'] = [];
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_set_level') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            if (($room['phase'] ?? '') !== 'lobby') {
+                return ['error' => 'lobby only'];
+            }
+            $room['level'] = wyr_normalize_level((string) ($query['level'] ?? 'normal'));
             return ['ok' => true];
         }
 

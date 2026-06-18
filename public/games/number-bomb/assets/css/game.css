@@ -169,6 +169,15 @@
   border-color: #ffd8a8;
 }
 
+.nb-range-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.nb-range-btn:disabled:not(.is-active) {
+  opacity: 0.55;
+}
+
 body.is-loading .game-stage {
   opacity: 0.55;
   pointer-events: none;

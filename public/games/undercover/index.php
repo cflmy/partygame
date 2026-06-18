@@ -222,6 +222,7 @@ pg_render_header(
         <div class="game-actions">
             <button type="button" class="btn btn--ghost" id="room-show-word-btn">查看词语</button>
             <button type="button" class="btn btn--ghost" id="room-rec-word-btn" hidden>再次查看词语</button>
+            <button type="button" class="btn btn--ghost" id="room-back-word-btn" hidden>返回设置</button>
         </div>
     </div>
 
@@ -234,6 +235,7 @@ pg_render_header(
         <div class="game-actions">
             <button type="button" class="btn" id="room-begin-vote-btn" hidden>描述完成，开始投票</button>
             <button type="button" class="btn btn--ghost" id="room-rec-word-describe-btn">查看我的词语</button>
+            <button type="button" class="btn btn--ghost" id="room-back-describe-btn" hidden>返回设置</button>
         </div>
     </div>
 
@@ -245,6 +247,9 @@ pg_render_header(
         </div>
         <div class="uc-eliminated" id="room-vote-status" hidden></div>
         <div class="uc-player-grid" id="room-vote-grid"></div>
+        <div class="game-actions">
+            <button type="button" class="btn btn--ghost" id="room-back-vote-btn" hidden>返回设置</button>
+        </div>
     </div>
 
     <div class="game-panel" id="panel-room-spectate">
@@ -275,6 +280,9 @@ pg_render_header(
         <div class="uc-result-card" id="room-ended-card">
             <h2 class="uc-result-card__title" id="room-ended-title">游戏结束</h2>
             <p class="uc-result-card__text" id="room-ended-text"></p>
+        </div>
+        <div class="game-actions">
+            <button type="button" class="btn btn--ghost" id="room-back-ended-btn" hidden>返回设置</button>
         </div>
     </div>
 

@@ -269,6 +269,37 @@ function nb_room_handle_action(string $action, array $query): void
             return ['ok' => true];
         }
 
+        if ($action === 'room_back') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            if (!in_array($room['phase'] ?? '', ['play', 'ended'], true)) {
+                return ['error' => 'cannot go back'];
+            }
+            $room['phase'] = 'lobby';
+            $room['bomb'] = null;
+            $room['history'] = [];
+            $room['player_index'] = 0;
+            $room['low'] = (int) ($room['min'] ?? 1);
+            $room['high'] = (int) ($room['max'] ?? 100);
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_set_range') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            if (($room['phase'] ?? '') !== 'lobby') {
+                return ['error' => 'lobby only'];
+            }
+            [$min, $max] = nb_normalize_bounds((int) ($query['min'] ?? 1), (int) ($query['max'] ?? 100));
+            $room['min'] = $min;
+            $room['max'] = $max;
+            $room['low'] = $min;
+            $room['high'] = $max;
+            return ['ok' => true];
+        }
+
         return ['error' => 'invalid action'];
     });
 

@@ -318,8 +318,22 @@
     [els.backSetupDescribeBtn, els.backSetupVoteBtn, els.backSetupEndedBtn]
       .filter(Boolean)
       .forEach((btn) => {
-        btn.addEventListener('click', () => showPanel('setup'));
+        btn.addEventListener('click', () => {
+          if (hasRoomSession()) return;
+          showPanel('setup');
+        });
       });
+  }
+
+  function hasRoomSession() {
+    try {
+      const raw = localStorage.getItem('partygame_uc_room_v1');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      return !!data.roomId;
+    } catch (_) {
+      return false;
+    }
   }
 
   loadSetup();

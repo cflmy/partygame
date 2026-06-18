@@ -24,7 +24,26 @@ pg_render_header(
 <?php
 require dirname(__DIR__, 2) . '/includes/room_panels.php';
 pg_render_room_mode_picker('轮流猜数，踩中炸弹者出局');
-pg_render_room_panels();
+pg_render_room_panels(<<<'HTML'
+            <div class="game-block">
+                <p class="game-block__label">数字范围</p>
+                <div class="nb-range-picker" id="room-create-range-group">
+                    <button type="button" class="nb-range-btn" data-min="1" data-max="50">1 ~ 50</button>
+                    <button type="button" class="nb-range-btn is-active" data-min="1" data-max="100">1 ~ 100</button>
+                    <button type="button" class="nb-range-btn" data-min="1" data-max="200">1 ~ 200</button>
+                </div>
+            </div>
+HTML, <<<'HTML'
+            <div class="game-block" id="room-lobby-settings">
+                <p class="game-block__label">数字范围</p>
+                <div class="nb-range-picker" id="room-lobby-range-group">
+                    <button type="button" class="nb-range-btn" data-min="1" data-max="50">1 ~ 50</button>
+                    <button type="button" class="nb-range-btn is-active" data-min="1" data-max="100">1 ~ 100</button>
+                    <button type="button" class="nb-range-btn" data-min="1" data-max="200">1 ~ 200</button>
+                </div>
+                <p class="game-block__hint" id="room-lobby-range-hint">本局炸弹数字将藏在此范围内</p>
+            </div>
+HTML);
 ?>
     <div class="game-panel" id="panel-setup">
         <p class="game-lead">设定数字范围，系统随机藏一颗炸弹。轮流猜数，缩小范围，踩中炸弹者接受惩罚。</p>

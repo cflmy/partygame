@@ -70,6 +70,17 @@
     return `${optionA}|${optionB}`;
   }
 
+  function hasRoomSession() {
+    try {
+      const raw = localStorage.getItem('partygame_wyr_room_v1');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      return !!data.roomId;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function resetVotes() {
     state.votesA = 0;
     state.votesB = 0;
@@ -138,24 +149,36 @@
     });
 
     els.startBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
       saveSetup();
       loadQuestion(true);
     });
 
     els.choiceA.addEventListener('click', () => {
+      if (hasRoomSession()) return;
       state.votesA += 1;
       renderVotes();
     });
 
     els.choiceB.addEventListener('click', () => {
+      if (hasRoomSession()) return;
       state.votesB += 1;
       renderVotes();
     });
 
     els.resetVotesBtn.addEventListener('click', resetVotes);
-    els.nextBtn.addEventListener('click', () => loadQuestion(true));
-    els.swapBtn.addEventListener('click', () => loadQuestion(false));
-    els.backSetupBtn.addEventListener('click', () => showPanel('setup'));
+    els.nextBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      loadQuestion(true);
+    });
+    els.swapBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      loadQuestion(false);
+    });
+    els.backSetupBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      showPanel('setup');
+    });
   }
 
   loadSetup();

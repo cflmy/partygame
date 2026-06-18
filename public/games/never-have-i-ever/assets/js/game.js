@@ -77,6 +77,17 @@
       .replace(/"/g, '&quot;');
   }
 
+  function hasRoomSession() {
+    try {
+      const raw = localStorage.getItem('partygame_nhie_room_v1');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      return !!data.roomId;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function renderSetupPlayers() {
     els.playerList.innerHTML = '';
     state.players.forEach((player, index) => {
@@ -226,9 +237,18 @@
       loadStatement(true);
     });
 
-    els.nextBtn.addEventListener('click', () => loadStatement(true));
-    els.swapBtn.addEventListener('click', () => loadStatement(false));
-    els.backSetupBtn.addEventListener('click', () => showPanel('setup'));
+    els.nextBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      loadStatement(true);
+    });
+    els.swapBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      loadStatement(false);
+    });
+    els.backSetupBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      showPanel('setup');
+    });
   }
 
   loadSetup();

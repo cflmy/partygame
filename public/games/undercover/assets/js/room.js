@@ -52,6 +52,10 @@
     describeEliminated: document.getElementById('room-describe-eliminated'),
     beginVoteBtn: document.getElementById('room-begin-vote-btn'),
     recWordDescribeBtn: document.getElementById('room-rec-word-describe-btn'),
+    backWordBtn: document.getElementById('room-back-word-btn'),
+    backDescribeBtn: document.getElementById('room-back-describe-btn'),
+    backVoteBtn: document.getElementById('room-back-vote-btn'),
+    backEndedBtn: document.getElementById('room-back-ended-btn'),
     voteHint: document.getElementById('room-vote-hint'),
     voteStatus: document.getElementById('room-vote-status'),
     voteGrid: document.getElementById('room-vote-grid'),
@@ -142,6 +146,27 @@
       return true;
     } catch (_) {
       return false;
+    }
+  }
+
+  function setRoomBackButtons(isHost) {
+    [els.backWordBtn, els.backDescribeBtn, els.backVoteBtn, els.backEndedBtn].forEach((btn) => {
+      if (btn) btn.hidden = !isHost;
+    });
+  }
+
+  async function backToLobby() {
+    if (!state.isHost || !state.roomId) return;
+    const data = await apiGet(new URLSearchParams({
+      action: 'room_back',
+      room: state.roomId,
+      token: state.token,
+    }));
+    state.wordVisible = false;
+    if (data.state) {
+      applyState(data.state);
+    } else {
+      await refreshState();
     }
   }
 
@@ -500,6 +525,7 @@
 
     if (phase === 'ended') {
       renderEnded(data);
+      setRoomBackButtons(state.isHost);
       showPanel('ended');
       return;
     }
@@ -512,6 +538,7 @@
 
     if (phase === 'lobby') {
       renderLobby(data);
+      setRoomBackButtons(false);
       showPanel('lobby');
       return;
     }
@@ -524,6 +551,7 @@
         els.wordBlock.hidden = true;
         els.showWordBtn.style.display = '';
       }
+      setRoomBackButtons(state.isHost);
       showPanel('word');
       return;
     }
@@ -538,12 +566,14 @@
       }
       els.beginVoteBtn.hidden = !state.isHost;
       setDescribeWaitBanner(state.isHost);
+      setRoomBackButtons(state.isHost);
       showPanel('describe');
       return;
     }
 
     if (phase === 'vote') {
       renderVote(data);
+      setRoomBackButtons(state.isHost);
       showPanel('vote');
       return;
     }
@@ -834,6 +864,13 @@
       fetchWord().catch((err) => window.alert(err.message));
     });
     els.beginVoteBtn.addEventListener('click', beginVote);
+
+    [els.backWordBtn, els.backDescribeBtn, els.backVoteBtn, els.backEndedBtn].forEach((btn) => {
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        backToLobby().catch((err) => window.alert(err.message));
+      });
+    });
 
     els.playerList.addEventListener('click', (event) => {
       const btn = event.target.closest('.uc-kick-btn');

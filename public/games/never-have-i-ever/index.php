@@ -24,7 +24,27 @@ pg_render_header(
 <?php
 require dirname(__DIR__, 2) . '/includes/room_panels.php';
 pg_render_room_mode_picker('同步陈述，做过就放下手指');
-pg_render_room_panels();
+pg_render_room_panels(<<<'HTML'
+            <div class="game-block">
+                <p class="game-block__label">题目强度</p>
+                <div class="game-level-group" id="room-create-level-group">
+                    <button type="button" class="game-level-btn" data-level="easy">轻松</button>
+                    <button type="button" class="game-level-btn is-active" data-level="normal">标准</button>
+                    <button type="button" class="game-level-btn" data-level="bold">大胆</button>
+                </div>
+                <p class="game-block__hint">创建后本局题目均按此强度抽取</p>
+            </div>
+HTML, <<<'HTML'
+            <div class="game-block" id="room-lobby-settings">
+                <p class="game-block__label">题目强度</p>
+                <div class="game-level-group" id="room-lobby-level-group">
+                    <button type="button" class="game-level-btn" data-level="easy">轻松</button>
+                    <button type="button" class="game-level-btn is-active" data-level="normal">标准</button>
+                    <button type="button" class="game-level-btn" data-level="bold">大胆</button>
+                </div>
+                <p class="game-block__hint" id="room-lobby-level-hint">本局题目均按此强度抽取</p>
+            </div>
+HTML);
 ?>
     <div class="game-panel" id="panel-setup">
         <p class="game-lead">添加玩家昵称并选择强度，系统随机出题。做过的人放下手指，先放完者接受惩罚。</p>

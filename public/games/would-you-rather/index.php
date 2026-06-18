@@ -24,7 +24,27 @@ pg_render_header(
 <?php
 require dirname(__DIR__, 2) . '/includes/room_panels.php';
 pg_render_room_mode_picker('同步题目，各自投票统计');
-pg_render_room_panels();
+pg_render_room_panels(<<<'HTML'
+            <div class="game-block">
+                <p class="game-block__label">题目强度</p>
+                <div class="game-level-group" id="room-create-level-group">
+                    <button type="button" class="game-level-btn" data-level="easy">轻松</button>
+                    <button type="button" class="game-level-btn is-active" data-level="normal">标准</button>
+                    <button type="button" class="game-level-btn" data-level="bold">大胆</button>
+                </div>
+                <p class="game-block__hint">创建后本局题目均按此强度抽取</p>
+            </div>
+HTML, <<<'HTML'
+            <div class="game-block" id="room-lobby-settings">
+                <p class="game-block__label">题目强度</p>
+                <div class="game-level-group" id="room-lobby-level-group">
+                    <button type="button" class="game-level-btn" data-level="easy">轻松</button>
+                    <button type="button" class="game-level-btn is-active" data-level="normal">标准</button>
+                    <button type="button" class="game-level-btn" data-level="bold">大胆</button>
+                </div>
+                <p class="game-block__hint" id="room-lobby-level-hint">本局题目均按此强度抽取</p>
+            </div>
+HTML);
 ?>
     <div class="game-panel" id="panel-setup">
         <p class="game-lead">选择题目强度，系统随机给出两个选项。大家讨论后投票，看看哪边更受欢迎。</p>
@@ -46,10 +66,9 @@ pg_render_room_panels();
         <details class="game-rules">
             <summary>玩法说明</summary>
             <ul>
-                <li>屏幕出现两个选项，问「你宁愿 A 还是 B？」</li>
+                <li>房间联机：每人用自己的手机点击 A 或 B 投出选择，实时统计票数。</li>
+                <li>传手机玩：围坐同屏，可点击选项累计本机票数，或纯讨论不投票。</li>
                 <li>每人思考后说出自己的选择，并简要说明理由。</li>
-                <li>点击 A 或 B 卡片可记录本机投票数，方便统计倾向。</li>
-                <li>也可以纯讨论，不点投票，直接进入下一题。</li>
                 <li>尊重不同选择，不强求一致，热闹就好。</li>
             </ul>
         </details>
@@ -62,17 +81,20 @@ pg_render_room_panels();
             <button type="button" class="wyr-choice wyr-choice--a" id="choice-a">
                 <span class="wyr-choice__badge">选项 A</span>
                 <span class="wyr-choice__text" id="option-a">加载中…</span>
+                <span class="wyr-choice__picked">✓ 已选此项</span>
             </button>
             <button type="button" class="wyr-choice wyr-choice--b" id="choice-b">
                 <span class="wyr-choice__badge">选项 B</span>
                 <span class="wyr-choice__text" id="option-b">加载中…</span>
+                <span class="wyr-choice__picked">✓ 已选此项</span>
             </button>
         </div>
 
-        <p class="wyr-round-hint">点击选项记录一票，可用于统计在场人数的选择倾向。</p>
+        <p class="wyr-round-hint" id="round-hint">点击选项记录一票，可用于统计在场人数的选择倾向。</p>
 
         <div class="wyr-votes">
             <p class="wyr-votes__title">本局投票</p>
+            <p class="wyr-votes__progress" id="vote-progress" hidden></p>
             <div class="wyr-votes__bar" aria-hidden="true">
                 <div class="wyr-votes__bar-a" id="vote-bar-a" style="width: 50%"></div>
                 <div class="wyr-votes__bar-b" id="vote-bar-b" style="width: 50%"></div>

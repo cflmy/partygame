@@ -1033,6 +1033,45 @@ function uc_room_vote(string $roomId, string $token, string $targetId): array
     });
 }
 
+function uc_room_reset_to_lobby(array &$room): void
+{
+    $room['phase'] = 'lobby';
+    $room['pair'] = null;
+    $room['round'] = 1;
+    $room['votes'] = [];
+    $room['last_vote'] = null;
+    $room['vote_deadline'] = null;
+    foreach ($room['players'] as &$player) {
+        $player['role'] = null;
+        $player['word'] = null;
+        $player['alive'] = true;
+        $player['word_seen'] = false;
+        $player['has_voted'] = false;
+    }
+    unset($player);
+}
+
+function uc_room_back(string $roomId, string $token): array
+{
+    return uc_room_update($roomId, static function (array &$room) use ($token): array {
+        $me = uc_room_find_player($room, $token);
+        if ($me === null) {
+            return ['error' => 'invalid token'];
+        }
+        if (empty($me['is_host'])) {
+            return ['error' => 'host only'];
+        }
+        if (($room['phase'] ?? 'lobby') === 'lobby') {
+            return ['error' => 'cannot go back'];
+        }
+
+        uc_room_reset_to_lobby($room);
+        $me = uc_room_find_player($room, $token);
+
+        return ['ok' => true, 'state' => uc_room_public_state($room, $me)];
+    });
+}
+
 function uc_room_update_settings(string $roomId, string $token, int $undercoverCount): array
 {
     return uc_room_update($roomId, static function (array &$room) use ($token, $undercoverCount): array {

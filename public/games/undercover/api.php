@@ -178,6 +178,18 @@ if ($action === 'room_settings') {
     exit;
 }
 
+if ($action === 'room_back') {
+    $roomId = (string) ($_GET['room'] ?? '');
+    $token = (string) ($_GET['token'] ?? '');
+    $result = uc_room_back($roomId, $token);
+    if (isset($result['error'])) {
+        uc_json_response($result, 400);
+        exit;
+    }
+    uc_json_response($result);
+    exit;
+}
+
 if ($action === 'room_kick') {
     $roomId = (string) ($_GET['room'] ?? '');
     $token = (string) ($_GET['token'] ?? '');

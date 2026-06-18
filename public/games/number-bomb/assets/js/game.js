@@ -82,6 +82,17 @@
       .replace(/"/g, '&quot;');
   }
 
+  function hasRoomSession() {
+    try {
+      const raw = localStorage.getItem('partygame_nb_room_v1');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      return !!data.roomId;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function renderSetupPlayers() {
     els.playerList.innerHTML = '';
     state.players.forEach((name, index) => {
@@ -272,6 +283,7 @@
     });
 
     els.startBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
       saveSetup();
       startGame();
     });
@@ -284,9 +296,18 @@
       }
     });
 
-    els.restartBtn.addEventListener('click', startGame);
-    els.backSetupBtn.addEventListener('click', () => showPanel('setup'));
-    els.backSetupResultBtn.addEventListener('click', () => showPanel('setup'));
+    els.restartBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      startGame();
+    });
+    els.backSetupBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      showPanel('setup');
+    });
+    els.backSetupResultBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      showPanel('setup');
+    });
   }
 
   loadSetup();
