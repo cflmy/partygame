@@ -8,8 +8,11 @@
       const levelBtn = document.querySelector('.game-level-btn.is-active');
       return { level: levelBtn ? levelBtn.dataset.level : 'normal' };
     },
-    onState(data) {
-      if ((data.phase || '') === 'lobby') return;
+    onState(data, ctx) {
+      if ((data.phase || '') === 'lobby' || (ctx && ctx.mode === 'lobby')) {
+        hideGamePanels();
+        return;
+      }
       if ((data.phase || '') === 'play') {
         document.getElementById('option-a').textContent = data.option_a || '';
         document.getElementById('option-b').textContent = data.option_b || '';
@@ -27,9 +30,23 @@
     },
   });
 
+  function hideGamePanels() {
+    ['setup', 'play'].forEach((p) => {
+      const node = document.getElementById(`panel-${p}`);
+      if (node) node.classList.remove('is-active');
+    });
+  }
+
   function showGamePanel(name) {
-    const node = document.getElementById(`panel-${name}`);
-    if (node) node.classList.add('is-active');
+    ['setup', 'play'].forEach((p) => {
+      const node = document.getElementById(`panel-${p}`);
+      if (node) node.classList.toggle('is-active', p === name);
+    });
+    ['panel-room-entry', 'panel-room-lobby', 'panel-room-spectate', 'panel-room-removed', 'panel-mode']
+      .forEach((id) => {
+        const node = document.getElementById(id);
+        if (node) node.classList.remove('is-active');
+      });
   }
 
   document.getElementById('room-start-btn').addEventListener('click', () => {

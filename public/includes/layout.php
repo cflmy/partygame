@@ -57,6 +57,7 @@ function pg_render_page_close(array $extraScripts = []): void
     pg_render_footer();
     echo "</div>\n";
     echo '<script src="/assets/js/bg.js"></script>' . "\n";
+    echo '<script src="/assets/js/room-guard.js"></script>' . "\n";
     foreach ($extraScripts as $src) {
         echo '<script src="' . htmlspecialchars($src, ENT_QUOTES, 'UTF-8') . '"></script>' . "\n";
     }

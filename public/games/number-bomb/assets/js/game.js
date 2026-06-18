@@ -293,5 +293,7 @@
   renderSetupPlayers();
   renderRangeButtons();
   bindEvents();
-  showPanel('setup');
+  if (!document.getElementById('panel-mode')) {
+    showPanel('setup');
+  }
 })();

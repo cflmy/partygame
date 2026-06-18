@@ -11,8 +11,11 @@
         max: active ? active.dataset.max : '100',
       };
     },
-    onState(data) {
-      if ((data.phase || '') === 'lobby') return;
+    onState(data, ctx) {
+      if ((data.phase || '') === 'lobby' || (ctx && ctx.mode === 'lobby')) {
+        hideGamePanels();
+        return;
+      }
       if ((data.phase || '') === 'ended') {
         document.getElementById('result-title').textContent = '游戏结束';
         document.getElementById('result-text').textContent = data.bomb != null
@@ -54,11 +57,23 @@
     );
   }
 
+  function hideGamePanels() {
+    ['setup', 'play', 'result'].forEach((p) => {
+      const node = document.getElementById(`panel-${p}`);
+      if (node) node.classList.remove('is-active');
+    });
+  }
+
   function showGamePanel(name) {
-    ['play', 'result'].forEach((p) => {
+    ['setup', 'play', 'result'].forEach((p) => {
       const node = document.getElementById(`panel-${p}`);
       if (node) node.classList.toggle('is-active', p === name);
     });
+    ['panel-room-entry', 'panel-room-lobby', 'panel-room-spectate', 'panel-room-removed', 'panel-mode']
+      .forEach((id) => {
+        const node = document.getElementById(id);
+        if (node) node.classList.remove('is-active');
+      });
   }
 
   document.getElementById('room-start-btn').addEventListener('click', () => {
