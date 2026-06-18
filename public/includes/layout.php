@@ -54,8 +54,8 @@ function pg_render_page_open(): void
 
 function pg_render_page_close(array $extraScripts = []): void
 {
-    echo "</div>\n";
     pg_render_footer();
+    echo "</div>\n";
     echo '<script src="/assets/js/bg.js"></script>' . "\n";
     foreach ($extraScripts as $src) {
         echo '<script src="' . htmlspecialchars($src, ENT_QUOTES, 'UTF-8') . '"></script>' . "\n";
@@ -122,22 +122,20 @@ function pg_render_links_footer(): void
     ?>
     <footer class="footer card">
         <h2>友情链接</h2>
-        <ul class="link-grid" role="list">
+        <div class="link-grid">
             <?php foreach ($links as $link): ?>
-            <li class="link-grid__item">
-                <a class="link-card <?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>"
-                   href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>"
-                   target="_blank" rel="noopener noreferrer">
-                    <div class="name"><?= htmlspecialchars($link['name'], ENT_QUOTES, 'UTF-8') ?></div>
-                    <div class="url"><?= htmlspecialchars($link['url'], ENT_QUOTES, 'UTF-8') ?></div>
-                </a>
-            </li>
+            <a class="link-card <?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>"
+               href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>"
+               target="_blank" rel="noopener noreferrer">
+                <div class="name"><?= htmlspecialchars($link['name'], ENT_QUOTES, 'UTF-8') ?></div>
+                <div class="url"><?= htmlspecialchars($link['url'], ENT_QUOTES, 'UTF-8') ?></div>
+            </a>
             <?php endforeach; ?>
-        </ul>
+        </div>
         <div class="footer-meta">
-            <p>开源共建 · 联系 <a href="mailto:pingan@cflmy.cn">pingan@cflmy.cn</a></p>
-            <p>© <?= date('Y') ?> <?= htmlspecialchars(pg_site_name(), ENT_QUOTES, 'UTF-8') ?>
-               · <a href="<?= htmlspecialchars(pg_site_url(), ENT_QUOTES, 'UTF-8') ?>">partygame.cflmy.cn</a></p>
+            开源共建 · 联系 <a href="mailto:pingan@cflmy.cn">pingan@cflmy.cn</a><br>
+            © <?= date('Y') ?> <?= htmlspecialchars(pg_site_name(), ENT_QUOTES, 'UTF-8') ?>
+            · <a href="<?= htmlspecialchars(pg_site_url(), ENT_QUOTES, 'UTF-8') ?>">partygame.cflmy.cn</a>
         </div>
     </footer>
     <?php

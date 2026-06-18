@@ -352,25 +352,13 @@ html, body {
 }
 
 .link-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-.link-grid__item {
-  display: flex;
-  min-width: 0;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.7rem;
 }
 
 .link-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  min-height: 4.5rem;
+  display: block;
   padding: 0.85rem 0.9rem;
   border-radius: 16px;
   text-decoration: none;
@@ -389,14 +377,12 @@ html, body {
 .link-card .name {
   font-weight: 700;
   font-size: 0.92rem;
-  margin-bottom: 0.2rem;
-  line-height: 1.35;
+  margin-bottom: 0.15rem;
 }
 
 .link-card .url {
   font-size: 0.74rem;
   color: var(--text-soft);
-  line-height: 1.4;
   word-break: break-all;
 }
 
@@ -414,14 +400,6 @@ html, body {
   font-size: 0.82rem;
   color: var(--text-soft);
   line-height: 1.85;
-}
-
-.footer-meta p {
-  margin: 0;
-}
-
-.footer-meta p + p {
-  margin-top: 0.25rem;
 }
 
 .footer-meta a {
@@ -447,19 +425,11 @@ html, body {
   .info-card:nth-child(n) {
     grid-column: span 12;
   }
-
-  .link-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 640px) {
   .page {
     padding: 0.85rem 0.75rem 2rem;
-  }
-
-  .link-grid {
-    grid-template-columns: 1fr;
   }
 }
 
