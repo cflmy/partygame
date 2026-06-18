@@ -67,3 +67,147 @@ function wyr_json_response(array $payload, int $status = 200): void
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($payload, JSON_UNESCAPED_UNICODE);
 }
+
+function wyr_room_public_state(array $room, ?array $me): array
+{
+    $votes = $room['votes'] ?? [];
+    $countA = 0;
+    $countB = 0;
+    foreach ($votes as $choice) {
+        if ($choice === 'a') $countA++;
+        if ($choice === 'b') $countB++;
+    }
+
+    return array_merge(pg_room_base_state($room), [
+        'option_a'   => $room['option_a'] ?? '',
+        'option_b'   => $room['option_b'] ?? '',
+        'votes_a'    => $countA,
+        'votes_b'    => $countB,
+        'my_vote'    => ($me && !empty($me['is_spectator'])) ? null : ($votes[$me['id'] ?? ''] ?? null),
+        'me'         => pg_room_me_payload($me),
+    ]);
+}
+
+function wyr_room_handle_action(string $action, array $query): void
+{
+    $roomId = (string) ($query['room'] ?? '');
+    $token = (string) ($query['token'] ?? '');
+
+    if ($action === 'room_create') {
+        $name = trim((string) ($query['name'] ?? ''));
+        $level = wyr_normalize_level((string) ($query['level'] ?? 'normal'));
+        $result = pg_room_create('would-you-rather', $name, [
+            'level' => $level, 'option_a' => '', 'option_b' => '', 'votes' => [],
+        ]);
+        if (isset($result['error'])) {
+            wyr_json_response($result, 400);
+            return;
+        }
+        $room = pg_room_read('would-you-rather', $result['room_id']);
+        $me = pg_room_find_player($room, $result['token']);
+        $result['state'] = wyr_room_public_state($room, $me);
+        wyr_json_response($result);
+        return;
+    }
+
+    if ($action === 'room_join') {
+        $result = pg_room_join('would-you-rather', $roomId, trim((string) ($query['name'] ?? '')), !empty($query['spectate']));
+        if (isset($result['error'])) {
+            wyr_json_response($result, 400);
+            return;
+        }
+        $room = pg_room_read('would-you-rather', $roomId);
+        $me = pg_room_find_member($room, $result['token']);
+        $result['state'] = wyr_room_public_state($room, $me);
+        wyr_json_response($result);
+        return;
+    }
+
+    if ($action === 'room_state') {
+        $room = pg_room_read('would-you-rather', $roomId);
+        if ($room === null) {
+            wyr_json_response(['error' => 'room not found'], 400);
+            return;
+        }
+        if (pg_room_is_kicked($room, $token)) {
+            wyr_json_response(['error' => 'kicked'], 400);
+            return;
+        }
+        $me = pg_room_find_member($room, $token);
+        if ($me === null) {
+            wyr_json_response(['error' => 'invalid token'], 400);
+            return;
+        }
+        wyr_json_response(wyr_room_public_state($room, $me));
+        return;
+    }
+
+    if ($action === 'room_kick') {
+        $result = pg_room_kick('would-you-rather', $roomId, $token, (string) ($query['target'] ?? ''), (string) ($query['type'] ?? 'player'));
+        if (isset($result['error'])) {
+            wyr_json_response($result, 400);
+            return;
+        }
+        $room = pg_room_read('would-you-rather', $roomId);
+        $me = pg_room_find_player($room, $token);
+        wyr_json_response(['ok' => true, 'state' => wyr_room_public_state($room, $me)]);
+        return;
+    }
+
+    pg_room_update('would-you-rather', $roomId, static function (array &$room) use ($action, $token, $query): array {
+        $me = pg_room_find_member($room, $token);
+        if ($me === null) {
+            return ['error' => 'invalid token'];
+        }
+
+        if ($action === 'room_start') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            $room['phase'] = 'play';
+            $room['votes'] = [];
+            $q = wyr_pick_question($room['level'] ?? 'normal', null);
+            $room['option_a'] = $q['option_a'] ?? '';
+            $room['option_b'] = $q['option_b'] ?? '';
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_vote') {
+            if (($room['phase'] ?? '') !== 'play') {
+                return ['error' => 'not in play'];
+            }
+            if (!empty($me['is_spectator'])) {
+                return ['error' => 'spectator cannot vote'];
+            }
+            $choice = (string) ($query['choice'] ?? '');
+            if (!in_array($choice, ['a', 'b'], true)) {
+                return ['error' => 'invalid choice'];
+            }
+            if (!isset($room['votes'])) {
+                $room['votes'] = [];
+            }
+            $room['votes'][$me['id']] = $choice;
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_next') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            $room['votes'] = [];
+            $q = wyr_pick_question($room['level'] ?? 'normal', wyr_question_key([
+                'option_a' => $room['option_a'] ?? '',
+                'option_b' => $room['option_b'] ?? '',
+            ]));
+            $room['option_a'] = $q['option_a'] ?? '';
+            $room['option_b'] = $q['option_b'] ?? '';
+            return ['ok' => true];
+        }
+
+        return ['error' => 'invalid action'];
+    });
+
+    $room = pg_room_read('would-you-rather', $roomId);
+    $me = pg_room_find_member($room, $token);
+    wyr_json_response(['ok' => true, 'state' => wyr_room_public_state($room, $me)]);
+}

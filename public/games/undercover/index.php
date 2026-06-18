@@ -8,6 +8,7 @@ pg_render_head(
     [
         '/games/truth-or-dare/assets/css/game.css',
         '/games/undercover/assets/css/game.css',
+        '/assets/css/room.css',
     ]
 );
 pg_render_page_open();

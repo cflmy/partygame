@@ -167,6 +167,14 @@
   }
 
   function bindEvents() {
+    const modeLocal = document.getElementById('mode-local-btn');
+    if (modeLocal) {
+      modeLocal.addEventListener('click', () => {
+        document.getElementById('panel-mode')?.classList.remove('is-active');
+        showPanel('setup');
+      });
+    }
+
     els.addPlayerBtn.addEventListener('click', () => {
       const name = els.playerInput.value.trim();
       if (!name) return;
@@ -197,6 +205,7 @@
 
     els.startBtn.addEventListener('click', () => {
       saveState();
+      if (document.getElementById('panel-mode')) return;
       els.currentPlayer.textContent = '准备开始';
       els.currentHint.textContent = '点击按钮转动瓶子，随机选出本轮玩家';
       els.spinBtn.textContent = '转动瓶子';
@@ -228,5 +237,7 @@
   renderPlayers();
   renderLevelButtons();
   bindEvents();
-  showPanel('setup');
+  if (!document.getElementById('panel-mode')) {
+    showPanel('setup');
+  }
 })();

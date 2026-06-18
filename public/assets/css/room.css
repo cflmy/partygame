@@ -1,0 +1,84 @@
+/* Shared room UI styles for party games */
+
+.pg-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.pg-mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.25rem 1rem;
+  border-radius: 16px;
+  border: 1px solid #dcd3ff;
+  background: linear-gradient(135deg, #faf8ff, #fff);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+}
+
+.pg-mode-card__icon { font-size: 1.75rem; line-height: 1; }
+.pg-mode-card__title { font-size: 1rem; font-weight: 700; color: var(--text); }
+.pg-mode-card__desc { font-size: 0.78rem; color: var(--text-soft); line-height: 1.55; }
+
+.pg-room-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.pg-room-tab {
+  flex: 1; padding: 0.65rem; border-radius: 12px; border: 1px solid var(--line);
+  background: #fff; font-family: inherit; font-weight: 600; font-size: 0.88rem; cursor: pointer;
+}
+.pg-room-tab.is-active { color: #7048e8; background: #f3f0ff; border-color: #dcd3ff; }
+
+.pg-room-tab-panel { display: none; }
+.pg-room-tab-panel.is-active { display: block; }
+
+.pg-room-code-box {
+  text-align: center; margin-bottom: 1rem; padding: 1.15rem; border-radius: 16px;
+  background: linear-gradient(135deg, #f3f0ff, #fff); border: 1px solid #dcd3ff;
+}
+.pg-room-code-box__code {
+  font-family: "Noto Serif SC", serif; font-size: 2rem; font-weight: 800;
+  letter-spacing: 0.25em; color: #5f3dc4; margin: 0.35rem 0 0.65rem;
+}
+
+.pg-room-player-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+  padding: 0.65rem 0.85rem; border-radius: 12px; border: 1px solid var(--line);
+  background: #fff; margin-bottom: 0.45rem; list-style: none;
+}
+.pg-room-player-item--spectator { opacity: 0.85; }
+
+.pg-kick-btn {
+  padding: 0.2rem 0.55rem; border-radius: 999px; border: 1px solid #ffd6e0;
+  background: #fff5f5; color: #c92a2a; font-size: 0.72rem; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+
+.pg-spectate-check {
+  display: flex; align-items: flex-start; gap: 0.45rem; margin: 0 0 1rem;
+  font-size: 0.85rem; color: var(--text-soft); line-height: 1.55;
+}
+
+.pg-removed-card {
+  text-align: center; margin: 0 auto; max-width: 22rem; padding: 1.5rem 1.25rem;
+  border-radius: 16px; background: linear-gradient(135deg, #fff5f5, #fff); border: 1px solid #ffd6e0;
+}
+.pg-wait-banner {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f3f0ff, #faf8ff);
+  border: 1px solid #dcd3ff;
+  color: #5f3dc4;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.pg-host-actions[hidden],
+.pg-wait-banner[hidden] {
+  display: none !important;
+}
+.pg-removed-card__text { font-size: 0.88rem; color: var(--text-soft); line-height: 1.65; margin: 0 0 1rem; }

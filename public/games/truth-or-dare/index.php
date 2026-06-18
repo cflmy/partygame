@@ -5,7 +5,10 @@ require dirname(__DIR__, 2) . '/includes/layout.php';
 pg_render_head(
     '真心话大冒险',
     '暮云聚会游戏 · 真心话大冒险：转瓶抽人，真心话或大冒险，轻松破冰。',
-    ['/games/truth-or-dare/assets/css/game.css']
+    [
+        '/games/truth-or-dare/assets/css/game.css',
+        '/assets/css/room.css',
+    ]
 );
 pg_render_page_open();
 pg_render_header(
@@ -17,7 +20,13 @@ pg_render_header(
 ?>
 
 <section class="game-stage card">
-    <div class="game-panel is-active" id="panel-setup">
+<?php
+require dirname(__DIR__, 2) . '/includes/room_panels.php';
+pg_render_room_mode_picker('转瓶抽人，真心话或大冒险');
+pg_render_room_panels();
+?>
+
+    <div class="game-panel" id="panel-setup">
         <p class="game-lead">添加玩家昵称，选择强度，即可开始。至少两人更有趣；不添加昵称也可直接游玩。</p>
 
         <div class="game-block">
@@ -110,4 +119,8 @@ pg_render_header(
 </section>
 
 <?php
-pg_render_page_close(['/games/truth-or-dare/assets/js/game.js']);
+pg_render_page_close([
+    '/assets/js/room-client.js',
+    '/games/truth-or-dare/assets/js/game.js',
+    '/games/truth-or-dare/assets/js/room.js',
+]);

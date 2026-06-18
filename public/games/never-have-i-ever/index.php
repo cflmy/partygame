@@ -8,6 +8,7 @@ pg_render_head(
     [
         '/games/truth-or-dare/assets/css/game.css',
         '/games/never-have-i-ever/assets/css/game.css',
+        '/assets/css/room.css',
     ]
 );
 pg_render_page_open();
@@ -20,7 +21,12 @@ pg_render_header(
 ?>
 
 <section class="game-stage card">
-    <div class="game-panel is-active" id="panel-setup">
+<?php
+require dirname(__DIR__, 2) . '/includes/room_panels.php';
+pg_render_room_mode_picker('同步陈述，做过就放下手指');
+pg_render_room_panels();
+?>
+    <div class="game-panel" id="panel-setup">
         <p class="game-lead">添加玩家昵称并选择强度，系统随机出题。做过的人放下手指，先放完者接受惩罚。</p>
 
         <div class="game-block">
@@ -88,4 +94,8 @@ pg_render_header(
 </section>
 
 <?php
-pg_render_page_close(['/games/never-have-i-ever/assets/js/game.js']);
+pg_render_page_close([
+    '/assets/js/room-client.js',
+    '/games/never-have-i-ever/assets/js/game.js',
+    '/games/never-have-i-ever/assets/js/room.js',
+]);

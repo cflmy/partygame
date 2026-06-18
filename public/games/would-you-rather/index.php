@@ -8,6 +8,7 @@ pg_render_head(
     [
         '/games/truth-or-dare/assets/css/game.css',
         '/games/would-you-rather/assets/css/game.css',
+        '/assets/css/room.css',
     ]
 );
 pg_render_page_open();
@@ -20,7 +21,12 @@ pg_render_header(
 ?>
 
 <section class="game-stage card">
-    <div class="game-panel is-active" id="panel-setup">
+<?php
+require dirname(__DIR__, 2) . '/includes/room_panels.php';
+pg_render_room_mode_picker('同步题目，各自投票统计');
+pg_render_room_panels();
+?>
+    <div class="game-panel" id="panel-setup">
         <p class="game-lead">选择题目强度，系统随机给出两个选项。大家讨论后投票，看看哪边更受欢迎。</p>
 
         <div class="game-block">
@@ -87,4 +93,8 @@ pg_render_header(
 </section>
 
 <?php
-pg_render_page_close(['/games/would-you-rather/assets/js/game.js']);
+pg_render_page_close([
+    '/assets/js/room-client.js',
+    '/games/would-you-rather/assets/js/game.js',
+    '/games/would-you-rather/assets/js/room.js',
+]);

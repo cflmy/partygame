@@ -62,3 +62,39 @@ function tod_json_response(array $payload, int $status = 200): void
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($payload, JSON_UNESCAPED_UNICODE);
 }
+
+function tod_room_public_state(array $room, ?array $me): array
+{
+    return array_merge(pg_room_base_state($room), [
+        'current_player' => $room['current_player'] ?? '',
+        'current_type'   => $room['current_type'] ?? '',
+        'current_text'   => $room['current_text'] ?? '',
+        'me'             => pg_room_me_payload($me),
+    ]);
+}
+
+function tod_room_host_action(string $gameSlug, array $query, callable $mutator): void
+{
+    $roomId = (string) ($query['room'] ?? '');
+    $token = (string) ($query['token'] ?? '');
+
+    $result = pg_room_update($gameSlug, $roomId, static function (array &$room) use ($token, $mutator): array {
+        $me = pg_room_find_player($room, $token);
+        if ($me === null) {
+            return ['error' => 'invalid token'];
+        }
+        if (empty($me['is_host'])) {
+            return ['error' => 'host only'];
+        }
+        return $mutator($room);
+    });
+
+    if (isset($result['error'])) {
+        tod_json_response($result, 400);
+        return;
+    }
+
+    $room = pg_room_read($gameSlug, $roomId);
+    $me = pg_room_find_player($room, $token);
+    tod_json_response(['ok' => true, 'state' => tod_room_public_state($room, $me)]);
+}

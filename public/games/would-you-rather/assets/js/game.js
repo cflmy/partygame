@@ -120,6 +120,15 @@
   }
 
   function bindEvents() {
+    const modeLocal = document.getElementById('mode-local-btn');
+    if (modeLocal) {
+      modeLocal.addEventListener('click', () => {
+        document.getElementById('panel-mode')?.classList.remove('is-active');
+        document.getElementById('panel-play')?.classList.remove('is-active');
+        showPanel('setup');
+      });
+    }
+
     els.levelGroup.addEventListener('click', (event) => {
       const btn = event.target.closest('.game-level-btn');
       if (!btn) return;

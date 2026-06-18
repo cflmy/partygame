@@ -3,8 +3,14 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib.php';
+require_once dirname(__DIR__, 2) . '/includes/room.php';
 
-$action = $_GET['action'] ?? 'start';
+$action = $_GET['action'] ?? '';
+
+if ($action !== '' && strpos($action, 'room_') === 0) {
+    nb_room_handle_action($action, $_GET);
+    exit;
+}
 
 if ($action === 'start') {
     $min = (int) ($_GET['min'] ?? 1);
@@ -15,14 +21,7 @@ if ($action === 'start') {
 
 if ($action === 'guess') {
     $guess = (int) ($_GET['guess'] ?? 0);
-    $result = nb_guess($guess);
-
-    if (isset($result['error']) && $result['error'] === 'game not started') {
-        nb_json_response($result, 400);
-        exit;
-    }
-
-    nb_json_response($result);
+    nb_json_response(nb_guess($guess));
     exit;
 }
 

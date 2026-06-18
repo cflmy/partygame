@@ -8,6 +8,7 @@ pg_render_head(
     [
         '/games/truth-or-dare/assets/css/game.css',
         '/games/number-bomb/assets/css/game.css',
+        '/assets/css/room.css',
     ]
 );
 pg_render_page_open();
@@ -20,7 +21,12 @@ pg_render_header(
 ?>
 
 <section class="game-stage card">
-    <div class="game-panel is-active" id="panel-setup">
+<?php
+require dirname(__DIR__, 2) . '/includes/room_panels.php';
+pg_render_room_mode_picker('轮流猜数，踩中炸弹者出局');
+pg_render_room_panels();
+?>
+    <div class="game-panel" id="panel-setup">
         <p class="game-lead">设定数字范围，系统随机藏一颗炸弹。轮流猜数，缩小范围，踩中炸弹者接受惩罚。</p>
 
         <div class="game-block">
@@ -97,4 +103,8 @@ pg_render_header(
 </section>
 
 <?php
-pg_render_page_close(['/games/number-bomb/assets/js/game.js']);
+pg_render_page_close([
+    '/assets/js/room-client.js',
+    '/games/number-bomb/assets/js/game.js',
+    '/games/number-bomb/assets/js/room.js',
+]);

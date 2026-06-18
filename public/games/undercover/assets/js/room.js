@@ -239,6 +239,23 @@
     secondsEl.textContent = String(left);
   }
 
+  function setDescribeWaitBanner(isHost) {
+    const panel = document.getElementById('panel-describe');
+    if (!panel) return;
+    let banner = panel.querySelector('.pg-wait-banner');
+    if (!isHost) {
+      if (!banner) {
+        banner = document.createElement('p');
+        banner.className = 'pg-wait-banner';
+        panel.insertBefore(banner, panel.firstElementChild);
+      }
+      banner.textContent = '等待房主发起投票…';
+      banner.hidden = false;
+    } else if (banner) {
+      banner.hidden = true;
+    }
+  }
+
   function renderLobby(data) {
     els.displayCode.textContent = data.room_id || state.roomId;
     els.playerList.innerHTML = '';
@@ -468,6 +485,7 @@
         els.describeEliminated.hidden = true;
       }
       els.beginVoteBtn.hidden = !state.isHost;
+      setDescribeWaitBanner(state.isHost);
       showPanel('describe');
       return;
     }
@@ -714,7 +732,10 @@
 
   function bindEvents() {
     if (els.modeRoomBtn) {
-      els.modeRoomBtn.addEventListener('click', () => showPanel('entry'));
+      els.modeRoomBtn.addEventListener('click', () => {
+        document.getElementById('panel-mode')?.classList.remove('is-active');
+        showPanel('entry');
+      });
     }
 
     els.createBtn.addEventListener('click', createRoom);

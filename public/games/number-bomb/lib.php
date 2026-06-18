@@ -98,3 +98,161 @@ function nb_guess(int $guess): array
         'remaining' => $state['high'] - $state['low'] + 1,
     ];
 }
+
+function nb_room_public_state(array $room, ?array $me): array
+{
+    $payload = [
+        'min'            => (int) ($room['min'] ?? 1),
+        'max'            => (int) ($room['max'] ?? 100),
+        'low'            => (int) ($room['low'] ?? 1),
+        'high'           => (int) ($room['high'] ?? 100),
+        'player_index'   => (int) ($room['player_index'] ?? 0),
+        'history'        => $room['history'] ?? [],
+        'current_player' => nb_room_current_name($room),
+        'bomb'           => ($room['phase'] ?? '') === 'ended' ? ($room['bomb'] ?? null) : null,
+    ];
+
+    return array_merge(pg_room_base_state($room), $payload, [
+        'me' => pg_room_me_payload($me),
+    ]);
+}
+
+function nb_room_current_name(array $room): string
+{
+    $players = $room['players'] ?? [];
+    $idx = (int) ($room['player_index'] ?? 0);
+    if ($players === []) {
+        return '玩家';
+    }
+
+    return $players[$idx % count($players)]['name'] ?? '玩家';
+}
+
+function nb_room_handle_action(string $action, array $query): void
+{
+    $roomId = (string) ($query['room'] ?? '');
+    $token = (string) ($query['token'] ?? '');
+
+    if ($action === 'room_create') {
+        $name = trim((string) ($query['name'] ?? ''));
+        $min = (int) ($query['min'] ?? 1);
+        $max = (int) ($query['max'] ?? 100);
+        [$min, $max] = nb_normalize_bounds($min, $max);
+        $result = pg_room_create('number-bomb', $name, [
+            'min' => $min, 'max' => $max, 'low' => $min, 'high' => $max,
+            'player_index' => 0, 'history' => [], 'bomb' => null,
+        ]);
+        if (isset($result['error'])) {
+            nb_json_response($result, 400);
+            return;
+        }
+        $room = pg_room_read('number-bomb', $result['room_id']);
+        $me = pg_room_find_player($room, $result['token']);
+        $result['state'] = nb_room_public_state($room, $me);
+        nb_json_response($result);
+        return;
+    }
+
+    if ($action === 'room_join') {
+        $name = trim((string) ($query['name'] ?? ''));
+        $asSpectator = !empty($query['spectate']);
+        $result = pg_room_join('number-bomb', $roomId, $name, $asSpectator);
+        if (isset($result['error'])) {
+            nb_json_response($result, 400);
+            return;
+        }
+        $room = pg_room_read('number-bomb', $roomId);
+        $me = pg_room_find_member($room, $result['token']);
+        $result['state'] = nb_room_public_state($room, $me);
+        nb_json_response($result);
+        return;
+    }
+
+    if ($action === 'room_state') {
+        $room = pg_room_read('number-bomb', $roomId);
+        if ($room === null) {
+            nb_json_response(['error' => 'room not found'], 400);
+            return;
+        }
+        if (pg_room_is_kicked($room, $token)) {
+            nb_json_response(['error' => 'kicked'], 400);
+            return;
+        }
+        $me = pg_room_find_member($room, $token);
+        if ($me === null) {
+            nb_json_response(['error' => 'invalid token'], 400);
+            return;
+        }
+        nb_json_response(nb_room_public_state($room, $me));
+        return;
+    }
+
+    if ($action === 'room_kick') {
+        $targetId = (string) ($query['target'] ?? '');
+        $type = (string) ($query['type'] ?? 'player');
+        $result = pg_room_kick('number-bomb', $roomId, $token, $targetId, $type);
+        if (isset($result['error'])) {
+            nb_json_response($result, 400);
+            return;
+        }
+        $room = pg_room_read('number-bomb', $roomId);
+        $me = pg_room_find_player($room, $token);
+        nb_json_response(['ok' => true, 'state' => nb_room_public_state($room, $me)]);
+        return;
+    }
+
+    pg_room_update('number-bomb', $roomId, static function (array &$room) use ($action, $token, $query): array {
+        $me = pg_room_find_player($room, $token);
+        if ($me === null) {
+            return ['error' => 'invalid token'];
+        }
+
+        if ($action === 'room_start') {
+            if (empty($me['is_host'])) {
+                return ['error' => 'host only'];
+            }
+            $room['phase'] = 'play';
+            $room['bomb'] = random_int((int) $room['min'], (int) $room['max']);
+            $room['low'] = (int) $room['min'];
+            $room['high'] = (int) $room['max'];
+            $room['player_index'] = 0;
+            $room['history'] = [];
+            return ['ok' => true];
+        }
+
+        if ($action === 'room_guess') {
+            if (($room['phase'] ?? '') !== 'play') {
+                return ['error' => 'not in play'];
+            }
+            $current = nb_room_current_name($room);
+            if (($me['name'] ?? '') !== $current && empty($me['is_host'])) {
+                return ['error' => 'not your turn'];
+            }
+            $guess = (int) ($query['guess'] ?? 0);
+            $low = (int) $room['low'];
+            $high = (int) $room['high'];
+            if ($guess < $low || $guess > $high) {
+                return ['error' => 'out of range'];
+            }
+            if ($guess === (int) $room['bomb']) {
+                $room['phase'] = 'ended';
+                $room['history'][] = "{$current} 猜 {$guess} → 踩雷！";
+                return ['ok' => true];
+            }
+            if ($guess < (int) $room['bomb']) {
+                $room['low'] = $guess + 1;
+            } else {
+                $room['high'] = $guess - 1;
+            }
+            $room['history'][] = "{$current} 猜 {$guess}";
+            $room['player_index'] = ((int) $room['player_index'] + 1) % max(1, count($room['players']));
+            return ['ok' => true];
+        }
+
+        return ['error' => 'invalid action'];
+    });
+
+    $room = pg_room_read('number-bomb', $roomId);
+    $me = pg_room_find_member($room, $token);
+    nb_json_response(['ok' => true, 'state' => nb_room_public_state($room, $me)]);
+}
