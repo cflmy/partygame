@@ -1,0 +1,140 @@
+/* 从来没有 — 游戏页样式 */
+
+.nhie-finger-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.nhie-finger-btn {
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.nhie-finger-btn.is-active {
+  color: #e64980;
+  background: #fff0f3;
+  border-color: #ffd6e0;
+}
+
+.nhie-statement-card {
+  margin: 0 auto 1.15rem;
+  max-width: 32rem;
+  padding: 1.5rem 1.25rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff0f3, #fff);
+  border: 1px solid #ffd6e0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  text-align: center;
+}
+
+.nhie-statement-card__label {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: linear-gradient(135deg, #ff6b8a, #ffa8c5);
+}
+
+.nhie-statement-card__text {
+  font-family: "Noto Serif SC", serif;
+  font-size: 1.12rem;
+  line-height: 1.75;
+  color: var(--text);
+  margin: 0;
+}
+
+.nhie-players-section {
+  margin-top: 1rem;
+}
+
+.nhie-players-section.is-hidden {
+  display: none;
+}
+
+.nhie-players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 0.55rem;
+}
+
+.nhie-player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.55rem;
+  border-radius: 14px;
+  border: 1px solid #ffd6e0;
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.nhie-player-card:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 107, 138, 0.12);
+}
+
+.nhie-player-card.is-marked {
+  background: #fff0f3;
+  border-color: #ff8fab;
+}
+
+.nhie-player-card.is-out {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.nhie-player-card:disabled {
+  cursor: not-allowed;
+}
+
+.nhie-player-card__name {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.nhie-player-card__fingers {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.nhie-player-card__hint {
+  font-size: 0.68rem;
+  color: var(--text-soft);
+}
+
+.nhie-round-hint {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  margin-bottom: 0.75rem;
+  line-height: 1.55;
+}
+
+body.is-loading .game-stage {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .nhie-players-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

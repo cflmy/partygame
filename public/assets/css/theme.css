@@ -268,6 +268,10 @@ html, body {
   background: linear-gradient(135deg, #ff6b8a, #ffa8c5);
 }
 
+.game-card__icon--green {
+  background: linear-gradient(135deg, #69db7c, #8ce99a);
+}
+
 .game-card__title {
   margin: 0 0 0.35rem;
   font-size: 1rem;

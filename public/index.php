@@ -15,7 +15,7 @@ pg_render_header('即开即玩的聚会小游戏 · 返回 <a href="https://www.
         <div class="info-icon">🎲</div>
         <div>
             <h3>游戏类型</h3>
-            <p><strong>聚会破冰</strong><br>真心话大冒险已上线，更多玩法持续更新</p>
+            <p><strong>聚会破冰</strong><br>真心话大冒险、从来没有已上线，更多玩法持续更新</p>
         </div>
     </div>
     <div class="info-card card">
@@ -49,6 +49,12 @@ pg_render_header('即开即玩的聚会小游戏 · 返回 <a href="https://www.
             <div class="game-card__icon">真</div>
             <h3 class="game-card__title">真心话大冒险</h3>
             <p class="game-card__desc">聚会破冰经典：转瓶抽人，真心话或大冒险，三档强度题库。</p>
+            <span class="game-card__cta">开始游戏</span>
+        </a>
+        <a class="game-card" href="/games/never-have-i-ever/">
+            <div class="game-card__icon game-card__icon--green">没</div>
+            <h3 class="game-card__title">从来没有</h3>
+            <p class="game-card__desc">做过就放下手指：随机陈述，记录手指数，先放完者接受惩罚。</p>
             <span class="game-card__cta">开始游戏</span>
         </a>
     </div>
