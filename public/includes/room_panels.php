@@ -63,17 +63,41 @@ function pg_render_room_panels(): void
     </div>
 
     <div class="game-panel" id="panel-room-lobby">
+        <div class="pg-room-role-banner pg-room-role-banner--host" id="room-lobby-banner-host" hidden>
+            <span class="pg-room-role-banner__icon" aria-hidden="true">👑</span>
+            <div class="pg-room-role-banner__body">
+                <strong class="pg-room-role-banner__title">你是房主</strong>
+                <span class="pg-room-role-banner__desc">分享房间号邀请玩家，人数到齐后即可开始</span>
+            </div>
+        </div>
+        <div class="pg-room-role-banner pg-room-role-banner--player" id="room-lobby-banner-player" hidden>
+            <span class="pg-room-role-banner__icon" aria-hidden="true">🎮</span>
+            <div class="pg-room-role-banner__body">
+                <strong class="pg-room-role-banner__title">你已加入</strong>
+                <span class="pg-room-role-banner__desc">请等待房主开始游戏</span>
+            </div>
+        </div>
         <div class="pg-room-code-box">
             <p class="game-block__label">房间号</p>
             <p class="pg-room-code-box__code" id="room-display-code">000000</p>
-            <button type="button" class="btn btn--ghost" id="room-copy-code-btn">复制房间号</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="room-copy-code-btn">复制房间号</button>
         </div>
         <p class="game-block__hint" id="room-lobby-hint">等待玩家加入…</p>
         <p class="pg-wait-banner" id="room-lobby-wait" hidden>等待房主开始游戏…</p>
         <ul id="room-player-list"></ul>
-        <div class="game-actions">
-            <button type="button" class="btn" id="room-start-btn" hidden>开始游戏</button>
-            <button type="button" class="btn btn--ghost" id="room-leave-btn">离开房间</button>
+        <div class="game-actions pg-room-host-actions" id="room-host-start-wrap" hidden>
+            <button type="button" class="btn" id="room-start-btn">开始游戏</button>
+        </div>
+    </div>
+
+    <div class="pg-room-action-bar" id="room-action-bar" hidden>
+        <div class="pg-room-action-panel pg-room-action-panel--host" id="room-host-actions" hidden>
+            <p class="pg-room-action-panel__hint">房主可解散房间，所有玩家将被移出</p>
+            <button type="button" class="pg-room-btn pg-room-btn--dissolve" id="room-dissolve-btn">解散房间</button>
+        </div>
+        <div class="pg-room-action-panel pg-room-action-panel--player" id="room-player-actions" hidden>
+            <p class="pg-room-action-panel__hint" id="room-leave-hint">退出后将离开本局联机</p>
+            <button type="button" class="pg-room-btn pg-room-btn--leave" id="room-leave-btn">退出房间</button>
         </div>
     </div>
 

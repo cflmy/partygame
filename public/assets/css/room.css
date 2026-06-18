@@ -78,7 +78,125 @@
 }
 
 .pg-host-actions[hidden],
-.pg-wait-banner[hidden] {
+.pg-wait-banner[hidden],
+.pg-room-host-actions[hidden] {
+  display: none !important;
+}
+
+.pg-room-role-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+}
+
+.pg-room-role-banner--host {
+  background: linear-gradient(135deg, #fff9db, #fff);
+  border: 1px solid #ffe066;
+}
+
+.pg-room-role-banner--player {
+  background: linear-gradient(135deg, #e7f5ff, #fff);
+  border: 1px solid #a5d8ff;
+}
+
+.pg-room-role-banner__icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pg-room-role-banner__title {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+
+.pg-room-role-banner__desc {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.pg-room-action-bar {
+  margin-top: 0.15rem;
+}
+
+.pg-room-action-bar[hidden] {
+  display: none !important;
+}
+
+.pg-room-action-panel {
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.pg-room-action-panel--host {
+  background: linear-gradient(135deg, #fff5f5, #fff);
+  border: 1px solid #ffc9c9;
+}
+
+.pg-room-action-panel--player {
+  background: linear-gradient(135deg, #f8f9fa, #fff);
+  border: 1px solid var(--line);
+}
+
+.pg-room-action-panel__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.pg-room-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8.5rem;
+  padding: 0.62rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.pg-room-btn:hover {
+  transform: translateY(-1px);
+}
+
+.pg-room-btn--dissolve {
+  color: #c92a2a;
+  background: #fff;
+  border-color: #ffa8a8;
+  box-shadow: 0 2px 8px rgba(201, 42, 42, 0.08);
+}
+
+.pg-room-btn--dissolve:hover {
+  background: #fff5f5;
+}
+
+.pg-room-btn--leave {
+  color: var(--text-soft);
+  background: #fff;
+  border-color: var(--line);
+}
+
+.pg-room-btn--leave:hover {
+  color: var(--text);
+  border-color: #ced4da;
+}
+
+.pg-room-role-banner[hidden],
+.pg-room-action-panel[hidden] {
   display: none !important;
 }
 .pg-removed-card__text { font-size: 0.88rem; color: var(--text-soft); line-height: 1.65; margin: 0 0 1rem; }

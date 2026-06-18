@@ -72,7 +72,15 @@
         lobbyHint: document.getElementById('room-lobby-hint'),
         playerList: document.getElementById('room-player-list'),
         startBtn: document.getElementById('room-start-btn'),
+        hostStartWrap: document.getElementById('room-host-start-wrap'),
         leaveBtn: document.getElementById('room-leave-btn'),
+        leaveHint: document.getElementById('room-leave-hint'),
+        dissolveBtn: document.getElementById('room-dissolve-btn'),
+        hostActions: document.getElementById('room-host-actions'),
+        playerActions: document.getElementById('room-player-actions'),
+        lobbyBannerHost: document.getElementById('room-lobby-banner-host'),
+        lobbyBannerPlayer: document.getElementById('room-lobby-banner-player'),
+        actionBar: document.getElementById('room-action-bar'),
         removedText: document.getElementById('room-removed-text'),
         watchTitle: document.getElementById('room-watch-title'),
         watchText: document.getElementById('room-watch-text'),
@@ -166,6 +174,75 @@
         });
       }
 
+      function setRoomActionBar(isHost, isSpectator = false) {
+        if (els.actionBar) {
+          els.actionBar.hidden = !state.roomId;
+        }
+        if (els.hostActions) {
+          els.hostActions.hidden = !isHost;
+        }
+        if (els.playerActions) {
+          els.playerActions.hidden = isHost;
+        }
+        if (els.leaveBtn) {
+          els.leaveBtn.textContent = isSpectator ? '退出观战' : '退出房间';
+        }
+        if (els.leaveHint) {
+          els.leaveHint.textContent = isSpectator
+            ? '退出后将离开观战'
+            : '退出后将离开本局联机';
+        }
+      }
+
+      function setLobbyRoleUI(isHost) {
+        if (els.lobbyBannerHost) {
+          els.lobbyBannerHost.hidden = !isHost;
+        }
+        if (els.lobbyBannerPlayer) {
+          els.lobbyBannerPlayer.hidden = isHost;
+        }
+        if (els.hostStartWrap) {
+          els.hostStartWrap.hidden = !isHost;
+        }
+      }
+
+      function hideRoomActionBar() {
+        if (els.actionBar) els.actionBar.hidden = true;
+        if (els.hostActions) els.hostActions.hidden = true;
+        if (els.playerActions) els.playerActions.hidden = true;
+        if (els.lobbyBannerHost) els.lobbyBannerHost.hidden = true;
+        if (els.lobbyBannerPlayer) els.lobbyBannerPlayer.hidden = true;
+        if (els.hostStartWrap) els.hostStartWrap.hidden = true;
+      }
+
+      async function leaveRoom() {
+        if (state.roomId && state.token) {
+          try {
+            const params = baseParams();
+            params.set('action', 'room_leave');
+            await apiGet(params);
+          } catch (_) { /* room may already be gone */ }
+        }
+        stopPoll();
+        clearSession();
+        hideRoomActionBar();
+        showModePanel();
+      }
+
+      async function dissolveRoom() {
+        if (!state.isHost || !state.roomId) return;
+        if (!window.confirm('确定解散房间吗？所有玩家将被移出。')) return;
+        try {
+          const params = baseParams();
+          params.set('action', 'room_dissolve');
+          await apiGet(params);
+        } catch (_) { /* ignore */ }
+        stopPoll();
+        clearSession();
+        hideRoomActionBar();
+        showModePanel();
+      }
+
       function renderLobby(data) {
         els.displayCode.textContent = data.room_id || state.roomId;
         els.playerList.innerHTML = '';
@@ -197,20 +274,22 @@
         });
 
         const count = data.player_count || 0;
-        els.lobbyHint.textContent = count < minPlayers
-          ? `已加入 ${count} 人，至少 ${minPlayers} 人后可开始`
-          : `已加入 ${count} 人，可以开始游戏`;
-        if (!state.isHost) {
+        if (state.isHost) {
+          els.lobbyHint.textContent = count < minPlayers
+            ? `已加入 ${count} 人，至少 ${minPlayers} 人后可开始`
+            : `已加入 ${count} 人，可以开始游戏`;
+        } else {
           els.lobbyHint.textContent = `已加入 ${count} 人，请等待房主开始游戏`;
         }
 
         const lobbyWait = document.getElementById('room-lobby-wait');
-        if (lobbyWait) lobbyWait.hidden = state.isHost;
+        if (lobbyWait) lobbyWait.hidden = true;
 
         if (els.startBtn) {
-          els.startBtn.hidden = !state.isHost;
           els.startBtn.disabled = count < minPlayers;
         }
+        setLobbyRoleUI(state.isHost);
+        setRoomActionBar(state.isHost, false);
       }
 
       function renderWatch(data) {
@@ -234,6 +313,7 @@
         const savedRoomId = state.roomId;
         clearSession();
         hideModePanel();
+        hideRoomActionBar();
         if (els.removedText) els.removedText.textContent = message;
         if (els.joinCode && savedRoomId) els.joinCode.value = savedRoomId;
         showPanel('removed');
@@ -266,6 +346,10 @@
             showRemoved('你已被房主移出房间。');
             return null;
           }
+          if (err.code === 'room not found') {
+            showRemoved('房间已不存在或已被解散。');
+            return null;
+          }
           throw err;
         }
       }
@@ -275,6 +359,7 @@
         state.isHost = !!(data.me && data.me.is_host);
         state.isSpectator = !!(data.me && data.me.is_spectator);
         state.name = (data.me && data.me.name) || state.name;
+        setRoomActionBar(state.isHost, state.isSpectator);
 
         if (data.me && data.me.is_spectator) {
           renderWatch(data);
@@ -423,10 +508,12 @@
         }
         if (els.leaveBtn) {
           els.leaveBtn.addEventListener('click', () => {
-            stopPoll();
-            clearSession();
-            hideModePanel();
-            showPanel('entry');
+            leaveRoom().catch((err) => window.alert(err.message));
+          });
+        }
+        if (els.dissolveBtn) {
+          els.dissolveBtn.addEventListener('click', () => {
+            dissolveRoom().catch((err) => window.alert(err.message));
           });
         }
         const rejoinBtn = document.getElementById('room-removed-rejoin-btn');
@@ -461,6 +548,8 @@
         renderLobby,
         createRoom,
         joinRoom,
+        leaveRoom,
+        dissolveRoom,
       };
     },
   };

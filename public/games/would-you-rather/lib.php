@@ -154,6 +154,26 @@ function wyr_room_handle_action(string $action, array $query): void
         return;
     }
 
+    if ($action === 'room_leave') {
+        $result = pg_room_leave('would-you-rather', $roomId, $token);
+        if (isset($result['error'])) {
+            wyr_json_response($result, 400);
+            return;
+        }
+        wyr_json_response($result);
+        return;
+    }
+
+    if ($action === 'room_dissolve') {
+        $result = pg_room_dissolve('would-you-rather', $roomId, $token);
+        if (isset($result['error'])) {
+            wyr_json_response($result, 400);
+            return;
+        }
+        wyr_json_response($result);
+        return;
+    }
+
     pg_room_update('would-you-rather', $roomId, static function (array &$room) use ($action, $token, $query): array {
         $me = pg_room_find_member($room, $token);
         if ($me === null) {

@@ -76,6 +76,30 @@ if ($action === 'room_kick') {
     exit;
 }
 
+if ($action === 'room_leave') {
+    $roomId = (string) ($_GET['room'] ?? '');
+    $token = (string) ($_GET['token'] ?? '');
+    $result = pg_room_leave('truth-or-dare', $roomId, $token);
+    if (isset($result['error'])) {
+        tod_json_response($result, 400);
+        exit;
+    }
+    tod_json_response($result);
+    exit;
+}
+
+if ($action === 'room_dissolve') {
+    $roomId = (string) ($_GET['room'] ?? '');
+    $token = (string) ($_GET['token'] ?? '');
+    $result = pg_room_dissolve('truth-or-dare', $roomId, $token);
+    if (isset($result['error'])) {
+        tod_json_response($result, 400);
+        exit;
+    }
+    tod_json_response($result);
+    exit;
+}
+
 if ($action === 'room_start') {
     tod_room_host_action('truth-or-dare', $_GET, static function (array &$room): array {
         $room['phase'] = 'spin';

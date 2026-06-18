@@ -298,6 +298,79 @@ function pg_room_join(string $gameSlug, string $roomId, string $name, bool $asSp
     });
 }
 
+function pg_room_dissolve(string $gameSlug, string $roomId, string $token): array
+{
+    $room = pg_room_read($gameSlug, $roomId);
+    if ($room === null) {
+        return ['error' => 'room not found'];
+    }
+
+    $me = pg_room_find_player($room, $token);
+    if ($me === null || empty($me['is_host'])) {
+        return ['error' => empty($me['is_host']) ? 'host only' : 'invalid token'];
+    }
+
+    if (!@unlink(pg_room_file($gameSlug, $roomId))) {
+        return ['error' => 'dissolve failed'];
+    }
+
+    return ['ok' => true, 'dissolved' => true];
+}
+
+function pg_room_leave(string $gameSlug, string $roomId, string $token): array
+{
+    $room = pg_room_read($gameSlug, $roomId);
+    if ($room === null) {
+        return ['error' => 'room not found'];
+    }
+
+    if (pg_room_is_kicked($room, $token)) {
+        return ['error' => 'kicked'];
+    }
+
+    $me = pg_room_find_member($room, $token);
+    if ($me === null) {
+        return ['error' => 'invalid token'];
+    }
+
+    if (!empty($me['is_spectator'])) {
+        $room['spectators'] = array_values(array_filter(
+            $room['spectators'] ?? [],
+            static function (array $spectator) use ($token): bool {
+                return ($spectator['token'] ?? '') !== $token;
+            }
+        ));
+        pg_room_write($gameSlug, $roomId, $room);
+
+        return ['ok' => true, 'left' => true];
+    }
+
+    $wasHost = !empty($me['is_host']);
+    $room['players'] = array_values(array_filter(
+        $room['players'],
+        static function (array $player) use ($token): bool {
+            return ($player['token'] ?? '') !== $token;
+        }
+    ));
+
+    if ($room['players'] === []) {
+        @unlink(pg_room_file($gameSlug, $roomId));
+
+        return ['ok' => true, 'left' => true, 'empty' => true];
+    }
+
+    if ($wasHost) {
+        foreach ($room['players'] as $index => &$player) {
+            $player['is_host'] = ($index === 0);
+        }
+        unset($player);
+    }
+
+    pg_room_write($gameSlug, $roomId, $room);
+
+    return ['ok' => true, 'left' => true];
+}
+
 function pg_room_kick(string $gameSlug, string $roomId, string $token, string $targetId, string $type = 'player'): array
 {
     return pg_room_update($gameSlug, $roomId, static function (array &$room) use ($token, $targetId, $type): array {
@@ -477,6 +550,28 @@ function pg_room_handle_api(string $gameSlug, callable $buildState, callable $ha
         $room = pg_room_read($gameSlug, $roomId);
         $me = pg_room_find_player($room, $token);
         echo json_encode(['ok' => true, 'state' => $buildState($room, $me)], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    if ($action === 'room_leave') {
+        $result = pg_room_leave($gameSlug, $roomId, $token);
+        if (isset($result['error'])) {
+            http_response_code(400);
+            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    if ($action === 'room_dissolve') {
+        $result = pg_room_dissolve($gameSlug, $roomId, $token);
+        if (isset($result['error'])) {
+            http_response_code(400);
+            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
     }
 

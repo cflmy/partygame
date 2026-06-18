@@ -175,6 +175,20 @@ pg_render_header(
     </div>
 
     <div class="game-panel" id="panel-room-lobby">
+        <div class="pg-room-role-banner pg-room-role-banner--host" id="room-lobby-banner-host" hidden>
+            <span class="pg-room-role-banner__icon" aria-hidden="true">👑</span>
+            <div class="pg-room-role-banner__body">
+                <strong class="pg-room-role-banner__title">你是房主</strong>
+                <span class="pg-room-role-banner__desc">分享房间号邀请玩家，至少 4 人后可开始</span>
+            </div>
+        </div>
+        <div class="pg-room-role-banner pg-room-role-banner--player" id="room-lobby-banner-player" hidden>
+            <span class="pg-room-role-banner__icon" aria-hidden="true">🎮</span>
+            <div class="pg-room-role-banner__body">
+                <strong class="pg-room-role-banner__title">你已加入</strong>
+                <span class="pg-room-role-banner__desc">请等待房主开始游戏</span>
+            </div>
+        </div>
         <div class="uc-room-code-box">
             <p class="uc-room-code-box__label">房间号</p>
             <p class="uc-room-code-box__code" id="room-display-code">000000</p>
@@ -189,9 +203,8 @@ pg_render_header(
                 <button type="button" class="uc-role-btn" data-count="2">2 个卧底</button>
             </div>
         </div>
-        <div class="game-actions">
-            <button type="button" class="btn" id="room-start-btn" hidden>开始游戏</button>
-            <button type="button" class="btn btn--ghost" id="room-leave-btn">离开房间</button>
+        <div class="game-actions pg-room-host-actions" id="room-host-start-wrap" hidden>
+            <button type="button" class="btn" id="room-start-btn">开始游戏</button>
         </div>
     </div>
 
@@ -243,7 +256,7 @@ pg_render_header(
         <ul class="uc-room-player-list" id="room-watch-list"></ul>
         <div class="uc-eliminated" id="room-watch-eliminated" hidden></div>
         <div class="game-actions">
-            <button type="button" class="btn btn--ghost" id="room-watch-leave-btn">离开观战</button>
+            <button type="button" class="btn btn--ghost" id="room-watch-leave-btn" hidden>离开观战</button>
         </div>
     </div>
 
@@ -263,8 +276,16 @@ pg_render_header(
             <h2 class="uc-result-card__title" id="room-ended-title">游戏结束</h2>
             <p class="uc-result-card__text" id="room-ended-text"></p>
         </div>
-        <div class="game-actions">
-            <button type="button" class="btn btn--ghost" id="room-leave-ended-btn">离开房间</button>
+    </div>
+
+    <div class="pg-room-action-bar" id="room-action-bar" hidden>
+        <div class="pg-room-action-panel pg-room-action-panel--host" id="room-host-actions" hidden>
+            <p class="pg-room-action-panel__hint">房主可解散房间，所有玩家将被移出</p>
+            <button type="button" class="pg-room-btn pg-room-btn--dissolve" id="room-dissolve-btn">解散房间</button>
+        </div>
+        <div class="pg-room-action-panel pg-room-action-panel--player" id="room-player-actions" hidden>
+            <p class="pg-room-action-panel__hint" id="room-leave-hint">退出后将离开本局联机</p>
+            <button type="button" class="pg-room-btn pg-room-btn--leave" id="room-leave-btn">退出房间</button>
         </div>
     </div>
 </section>

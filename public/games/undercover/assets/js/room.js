@@ -31,7 +31,15 @@
     playerList: document.getElementById('room-player-list'),
     hostSettings: document.getElementById('room-host-settings'),
     startBtn: document.getElementById('room-start-btn'),
+    hostStartWrap: document.getElementById('room-host-start-wrap'),
     leaveBtn: document.getElementById('room-leave-btn'),
+    leaveHint: document.getElementById('room-leave-hint'),
+    dissolveBtn: document.getElementById('room-dissolve-btn'),
+    hostActions: document.getElementById('room-host-actions'),
+    playerActions: document.getElementById('room-player-actions'),
+    lobbyBannerHost: document.getElementById('room-lobby-banner-host'),
+    lobbyBannerPlayer: document.getElementById('room-lobby-banner-player'),
+    actionBar: document.getElementById('room-action-bar'),
     myName: document.getElementById('room-my-name'),
     wordHidden: document.getElementById('room-word-hidden'),
     wordBlock: document.getElementById('room-word-block'),
@@ -186,6 +194,7 @@
     const savedRoomId = state.roomId;
     clearSession();
     state.wordVisible = false;
+    hideRoomActionBar();
     hideMainPanels();
     if (els.removedText) {
       els.removedText.textContent = message || '你已被房主移出房间。';
@@ -301,14 +310,56 @@
       : `已加入 ${count} 人${specCount ? `，${specCount} 人观战` : ''}，可以开始游戏`;
 
     if (state.isHost) {
-      els.hostSettings.hidden = false;
-      els.startBtn.hidden = false;
       els.startBtn.disabled = count < 4;
       renderUndercoverButtons(els.lobbyUndercoverGroup, count, data.undercover_count || state.undercoverCount);
-    } else {
-      els.hostSettings.hidden = true;
-      els.startBtn.hidden = true;
     }
+    setLobbyRoleUI(state.isHost);
+    setRoomActionBar(state.isHost, false);
+  }
+
+  function setRoomActionBar(isHost, isSpectator = false) {
+    if (els.actionBar) {
+      els.actionBar.hidden = !state.roomId;
+    }
+    if (els.hostActions) {
+      els.hostActions.hidden = !isHost;
+    }
+    if (els.playerActions) {
+      els.playerActions.hidden = isHost;
+    }
+    if (els.leaveBtn) {
+      els.leaveBtn.textContent = isSpectator ? '退出观战' : '退出房间';
+    }
+    if (els.leaveHint) {
+      els.leaveHint.textContent = isSpectator
+        ? '退出后将离开观战'
+        : '退出后将离开本局联机';
+    }
+  }
+
+  function setLobbyRoleUI(isHost) {
+    if (els.lobbyBannerHost) {
+      els.lobbyBannerHost.hidden = !isHost;
+    }
+    if (els.lobbyBannerPlayer) {
+      els.lobbyBannerPlayer.hidden = isHost;
+    }
+    if (els.hostStartWrap) {
+      els.hostStartWrap.hidden = !isHost;
+    }
+    if (els.hostSettings) {
+      els.hostSettings.hidden = !isHost;
+    }
+  }
+
+  function hideRoomActionBar() {
+    if (els.actionBar) els.actionBar.hidden = true;
+    if (els.hostActions) els.hostActions.hidden = true;
+    if (els.playerActions) els.playerActions.hidden = true;
+    if (els.lobbyBannerHost) els.lobbyBannerHost.hidden = true;
+    if (els.lobbyBannerPlayer) els.lobbyBannerPlayer.hidden = true;
+    if (els.hostStartWrap) els.hostStartWrap.hidden = true;
+    if (els.hostSettings) els.hostSettings.hidden = true;
   }
 
   function renderUndercoverButtons(group, playerCount, activeCount) {
@@ -443,6 +494,7 @@
     state.name = (data.me && data.me.name) || state.name;
     if (data.undercover_count) state.undercoverCount = data.undercover_count;
     syncVoteDeadline(data);
+    setRoomActionBar(state.isHost, state.isSpectator);
 
     const phase = data.phase || 'lobby';
 
@@ -510,6 +562,10 @@
     } catch (err) {
       if (isKickedError(err)) {
         showRemoved('你已被房主移出房间，可以重新加入或返回。');
+        return null;
+      }
+      if (err.code === 'room not found') {
+        showRemoved('房间已不存在或已被解散。');
         return null;
       }
       throw err;
@@ -693,10 +749,37 @@
     }
   }
 
-  function leaveRoom() {
+  async function leaveRoom() {
+    if (state.roomId && state.token) {
+      try {
+        await apiGet(new URLSearchParams({
+          action: 'room_leave',
+          room: state.roomId,
+          token: state.token,
+        }));
+      } catch (_) { /* room may already be gone */ }
+    }
     stopPoll();
     clearSession();
     state.wordVisible = false;
+    hideRoomActionBar();
+    showModePanel();
+  }
+
+  async function dissolveRoom() {
+    if (!state.isHost || !state.roomId) return;
+    if (!window.confirm('确定解散房间吗？所有玩家将被移出。')) return;
+    try {
+      await apiGet(new URLSearchParams({
+        action: 'room_dissolve',
+        room: state.roomId,
+        token: state.token,
+      }));
+    } catch (_) { /* ignore */ }
+    stopPoll();
+    clearSession();
+    state.wordVisible = false;
+    hideRoomActionBar();
     showModePanel();
   }
 
@@ -768,13 +851,25 @@
       }
     });
 
-    [els.leaveBtn, els.leaveEndedBtn].forEach((btn) => {
-      btn.addEventListener('click', leaveRoom);
+    [els.leaveBtn].forEach((btn) => {
+      if (btn) {
+        btn.addEventListener('click', () => {
+          leaveRoom().catch((err) => window.alert(err.message));
+        });
+      }
     });
+
+    if (els.dissolveBtn) {
+      els.dissolveBtn.addEventListener('click', () => {
+        dissolveRoom().catch((err) => window.alert(err.message));
+      });
+    }
 
     const watchLeaveBtn = document.getElementById('room-watch-leave-btn');
     if (watchLeaveBtn) {
-      watchLeaveBtn.addEventListener('click', leaveRoom);
+      watchLeaveBtn.addEventListener('click', () => {
+        leaveRoom().catch((err) => window.alert(err.message));
+      });
     }
 
     const rejoinBtn = document.getElementById('room-removed-rejoin-btn');

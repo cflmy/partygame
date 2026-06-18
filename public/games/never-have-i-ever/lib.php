@@ -138,6 +138,26 @@ function nhie_room_handle_action(string $action, array $query): void
         return;
     }
 
+    if ($action === 'room_leave') {
+        $result = pg_room_leave('never-have-i-ever', $roomId, $token);
+        if (isset($result['error'])) {
+            nhie_json_response($result, 400);
+            return;
+        }
+        nhie_json_response($result);
+        return;
+    }
+
+    if ($action === 'room_dissolve') {
+        $result = pg_room_dissolve('never-have-i-ever', $roomId, $token);
+        if (isset($result['error'])) {
+            nhie_json_response($result, 400);
+            return;
+        }
+        nhie_json_response($result);
+        return;
+    }
+
     pg_room_update('never-have-i-ever', $roomId, static function (array &$room) use ($action, $token): array {
         $me = pg_room_find_player($room, $token);
         if ($me === null || empty($me['is_host'])) {

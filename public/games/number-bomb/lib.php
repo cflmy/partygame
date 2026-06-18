@@ -201,6 +201,26 @@ function nb_room_handle_action(string $action, array $query): void
         return;
     }
 
+    if ($action === 'room_leave') {
+        $result = pg_room_leave('number-bomb', $roomId, $token);
+        if (isset($result['error'])) {
+            nb_json_response($result, 400);
+            return;
+        }
+        nb_json_response($result);
+        return;
+    }
+
+    if ($action === 'room_dissolve') {
+        $result = pg_room_dissolve('number-bomb', $roomId, $token);
+        if (isset($result['error'])) {
+            nb_json_response($result, 400);
+            return;
+        }
+        nb_json_response($result);
+        return;
+    }
+
     pg_room_update('number-bomb', $roomId, static function (array &$room) use ($action, $token, $query): array {
         $me = pg_room_find_player($room, $token);
         if ($me === null) {

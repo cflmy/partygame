@@ -1163,3 +1163,76 @@ function uc_room_kick_spectator(string $roomId, string $token, string $targetId)
         return ['ok' => true, 'state' => uc_room_public_state($room, $me)];
     });
 }
+
+function uc_room_dissolve(string $roomId, string $token): array
+{
+    $room = uc_room_read($roomId);
+    if ($room === null) {
+        return ['error' => 'room not found'];
+    }
+
+    $me = uc_room_find_player($room, $token);
+    if ($me === null || empty($me['is_host'])) {
+        return ['error' => empty($me['is_host']) ? 'host only' : 'invalid token'];
+    }
+
+    if (!@unlink(uc_room_file($roomId))) {
+        return ['error' => 'dissolve failed'];
+    }
+
+    return ['ok' => true, 'dissolved' => true];
+}
+
+function uc_room_leave(string $roomId, string $token): array
+{
+    $room = uc_room_read($roomId);
+    if ($room === null) {
+        return ['error' => 'room not found'];
+    }
+
+    if (uc_room_find_kicked_token($room, $token)) {
+        return ['error' => 'kicked'];
+    }
+
+    $me = uc_room_find_member($room, $token);
+    if ($me === null) {
+        return ['error' => 'invalid token'];
+    }
+
+    if (!empty($me['is_spectator'])) {
+        $room['spectators'] = array_values(array_filter(
+            $room['spectators'] ?? [],
+            static function (array $spectator) use ($token): bool {
+                return ($spectator['token'] ?? '') !== $token;
+            }
+        ));
+        uc_room_write($roomId, $room);
+
+        return ['ok' => true, 'left' => true];
+    }
+
+    $wasHost = !empty($me['is_host']);
+    $room['players'] = array_values(array_filter(
+        $room['players'],
+        static function (array $player) use ($token): bool {
+            return ($player['token'] ?? '') !== $token;
+        }
+    ));
+
+    if ($room['players'] === []) {
+        @unlink(uc_room_file($roomId));
+
+        return ['ok' => true, 'left' => true, 'empty' => true];
+    }
+
+    if ($wasHost) {
+        foreach ($room['players'] as $index => &$player) {
+            $player['is_host'] = ($index === 0);
+        }
+        unset($player);
+    }
+
+    uc_room_write($roomId, $room);
+
+    return ['ok' => true, 'left' => true];
+}

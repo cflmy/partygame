@@ -194,4 +194,28 @@ if ($action === 'room_kick') {
     exit;
 }
 
+if ($action === 'room_leave') {
+    $roomId = (string) ($_GET['room'] ?? '');
+    $token = (string) ($_GET['token'] ?? '');
+    $result = uc_room_leave($roomId, $token);
+    if (isset($result['error'])) {
+        uc_json_response($result, 400);
+        exit;
+    }
+    uc_json_response($result);
+    exit;
+}
+
+if ($action === 'room_dissolve') {
+    $roomId = (string) ($_GET['room'] ?? '');
+    $token = (string) ($_GET['token'] ?? '');
+    $result = uc_room_dissolve($roomId, $token);
+    if (isset($result['error'])) {
+        uc_json_response($result, 400);
+        exit;
+    }
+    uc_json_response($result);
+    exit;
+}
+
 uc_json_response(['error' => 'invalid action'], 400);
