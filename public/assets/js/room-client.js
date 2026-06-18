@@ -137,6 +137,7 @@
         Object.entries(panels).forEach(([key, node]) => {
           if (node) node.classList.toggle('is-active', key === name);
         });
+        hideLocalPanels();
       }
 
       function hideModePanel() {

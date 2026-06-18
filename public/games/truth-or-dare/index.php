@@ -23,7 +23,27 @@ pg_render_header(
 <?php
 require dirname(__DIR__, 2) . '/includes/room_panels.php';
 pg_render_room_mode_picker('转瓶抽人，真心话或大冒险');
-pg_render_room_panels();
+pg_render_room_panels(<<<'HTML'
+            <div class="game-block">
+                <p class="game-block__label">题目强度</p>
+                <div class="game-level-group" id="room-create-level-group">
+                    <button type="button" class="game-level-btn" data-level="easy">轻松</button>
+                    <button type="button" class="game-level-btn is-active" data-level="normal">标准</button>
+                    <button type="button" class="game-level-btn" data-level="bold">大胆</button>
+                </div>
+                <p class="game-block__hint">创建后本局题目均按此强度抽取</p>
+            </div>
+HTML, <<<'HTML'
+            <div class="game-block" id="room-lobby-settings">
+                <p class="game-block__label">题目强度</p>
+                <div class="game-level-group" id="room-lobby-level-group">
+                    <button type="button" class="game-level-btn" data-level="easy">轻松</button>
+                    <button type="button" class="game-level-btn is-active" data-level="normal">标准</button>
+                    <button type="button" class="game-level-btn" data-level="bold">大胆</button>
+                </div>
+                <p class="game-block__hint" id="room-lobby-level-hint">本局题目均按此强度抽取</p>
+            </div>
+HTML);
 ?>
 
     <div class="game-panel" id="panel-setup">
@@ -116,6 +136,8 @@ pg_render_room_panels();
             <button type="button" class="btn btn--ghost" id="swap-btn">换一个题目</button>
         </div>
     </div>
+
+    <?php pg_render_room_action_bar(); ?>
 </section>
 
 <?php

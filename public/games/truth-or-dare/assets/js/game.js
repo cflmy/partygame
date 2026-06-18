@@ -101,6 +101,17 @@
       .replace(/"/g, '&quot;');
   }
 
+  function hasRoomSession() {
+    try {
+      const raw = localStorage.getItem('partygame_tod_room_v1');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      return !!data.roomId;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function pickRandomPlayer() {
     if (state.players.length === 0) {
       return '玩家';
@@ -205,7 +216,7 @@
 
     els.startBtn.addEventListener('click', () => {
       saveState();
-      if (document.getElementById('panel-mode')) return;
+      if (hasRoomSession()) return;
       els.currentPlayer.textContent = '准备开始';
       els.currentHint.textContent = '点击按钮转动瓶子，随机选出本轮玩家';
       els.spinBtn.textContent = '转动瓶子';
@@ -218,6 +229,7 @@
     els.dareCard.addEventListener('click', () => reveal('dare'));
 
     els.swapBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
       if (!state.currentType) return;
       reveal(state.currentType);
     });
@@ -229,8 +241,14 @@
       showPanel('spin');
     });
 
-    els.backSetupBtn.addEventListener('click', () => showPanel('setup'));
-    els.backSetupChooseBtn.addEventListener('click', () => showPanel('setup'));
+    els.backSetupBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      showPanel('setup');
+    });
+    els.backSetupChooseBtn.addEventListener('click', () => {
+      if (hasRoomSession()) return;
+      showPanel('setup');
+    });
   }
 
   loadState();

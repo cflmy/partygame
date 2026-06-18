@@ -124,7 +124,8 @@
 }
 
 .pg-room-action-bar {
-  margin-top: 0.15rem;
+  margin-top: 1.35rem;
+  padding-top: 0.15rem;
 }
 
 .pg-room-action-bar[hidden] {

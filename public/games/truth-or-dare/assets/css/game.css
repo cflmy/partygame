@@ -118,6 +118,15 @@
   border-color: #ffd6e0;
 }
 
+.game-level-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.game-level-btn:disabled:not(.is-active) {
+  opacity: 0.55;
+}
+
 .game-actions {
   display: flex;
   flex-wrap: wrap;
@@ -290,6 +299,7 @@
 
 .game-reveal {
   text-align: center;
+  margin-bottom: 0.75rem;
 }
 
 .game-reveal__badge {
@@ -334,6 +344,7 @@
 
 .game-reveal__player {
   margin-top: 0.85rem;
+  margin-bottom: 0.25rem;
   font-size: 0.85rem;
   color: var(--text-soft);
 }

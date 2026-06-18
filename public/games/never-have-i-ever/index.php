@@ -91,6 +91,8 @@ pg_render_room_panels();
             <button type="button" class="btn btn--ghost" id="back-setup-btn">返回设置</button>
         </div>
     </div>
+
+    <?php pg_render_room_action_bar(); ?>
 </section>
 
 <?php

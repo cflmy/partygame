@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib.php';
 require_once dirname(__DIR__, 2) . '/includes/room.php';
-require_once dirname(__DIR__, 2) . '/includes/room.php';
 
 $action = $_GET['action'] ?? '';
 
@@ -149,11 +148,58 @@ if ($action === 'room_choose') {
     exit;
 }
 
+if ($action === 'room_swap') {
+    tod_room_host_action('truth-or-dare', $_GET, static function (array &$room): array {
+        if (($room['phase'] ?? '') !== 'reveal') {
+            return ['error' => 'not in reveal phase'];
+        }
+        $type = $room['current_type'] ?? '';
+        if (!in_array($type, ['truth', 'dare'], true)) {
+            return ['error' => 'invalid type'];
+        }
+        $exclude = $room['current_text'] ?? '';
+        $question = tod_pick_question($type, $room['level'] ?? 'normal', $exclude !== '' ? $exclude : null);
+        if ($question === null) {
+            return ['error' => 'no question'];
+        }
+        $room['current_text'] = $question['text'] ?? '';
+        return ['ok' => true];
+    });
+    exit;
+}
+
 if ($action === 'room_next') {
     tod_room_host_action('truth-or-dare', $_GET, static function (array &$room): array {
         $room['phase'] = 'spin';
         $room['current_type'] = '';
         $room['current_text'] = '';
+        return ['ok' => true];
+    });
+    exit;
+}
+
+if ($action === 'room_back') {
+    tod_room_host_action('truth-or-dare', $_GET, static function (array &$room): array {
+        $phase = $room['phase'] ?? '';
+        if (in_array($phase, ['choose', 'spin'], true)) {
+            $room['phase'] = 'lobby';
+            $room['current_player'] = '';
+            $room['current_type'] = '';
+            $room['current_text'] = '';
+            return ['ok' => true];
+        }
+        return ['error' => 'cannot go back'];
+    });
+    exit;
+}
+
+if ($action === 'room_set_level') {
+    $level = tod_normalize_level((string) ($_GET['level'] ?? 'normal'));
+    tod_room_host_action('truth-or-dare', $_GET, static function (array &$room) use ($level): array {
+        if (($room['phase'] ?? '') !== 'lobby') {
+            return ['error' => 'lobby only'];
+        }
+        $room['level'] = $level;
         return ['ok' => true];
     });
     exit;

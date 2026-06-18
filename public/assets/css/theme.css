@@ -308,6 +308,10 @@ html, body {
   background: linear-gradient(135deg, #ff6b8a, #ffa8c5);
 }
 
+.btn[hidden] {
+  display: none !important;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

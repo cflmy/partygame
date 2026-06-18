@@ -278,16 +278,10 @@ pg_render_header(
         </div>
     </div>
 
-    <div class="pg-room-action-bar" id="room-action-bar" hidden>
-        <div class="pg-room-action-panel pg-room-action-panel--host" id="room-host-actions" hidden>
-            <p class="pg-room-action-panel__hint">房主可解散房间，所有玩家将被移出</p>
-            <button type="button" class="pg-room-btn pg-room-btn--dissolve" id="room-dissolve-btn">解散房间</button>
-        </div>
-        <div class="pg-room-action-panel pg-room-action-panel--player" id="room-player-actions" hidden>
-            <p class="pg-room-action-panel__hint" id="room-leave-hint">退出后将离开本局联机</p>
-            <button type="button" class="pg-room-btn pg-room-btn--leave" id="room-leave-btn">退出房间</button>
-        </div>
-    </div>
+    <?php
+    require dirname(__DIR__, 2) . '/includes/room_panels.php';
+    pg_render_room_action_bar();
+    ?>
 </section>
 
 <?php
