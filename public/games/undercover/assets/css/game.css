@@ -1,0 +1,438 @@
+/* 谁是卧底 — 游戏页样式 */
+
+.uc-role-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.uc-role-btn {
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.uc-role-btn.is-active {
+  color: #7048e8;
+  background: #f3f0ff;
+  border-color: #dcd3ff;
+}
+
+.uc-word-card {
+  text-align: center;
+  margin: 0 auto 1.15rem;
+  max-width: 24rem;
+  padding: 1.75rem 1.35rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f3f0ff, #fff);
+  border: 1px solid #dcd3ff;
+}
+
+.uc-word-card__handoff {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin-bottom: 0.65rem;
+}
+
+.uc-word-card__name {
+  font-family: "Noto Serif SC", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.85rem;
+}
+
+.uc-word-card__label {
+  display: inline-block;
+  margin-bottom: 0.55rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #7048e8, #9775fa);
+}
+
+.uc-word-card__word {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #5f3dc4;
+  margin-bottom: 0.35rem;
+}
+
+.uc-word-card__hint {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.uc-word-hidden {
+  font-size: 3rem;
+  line-height: 1;
+  margin: 0.5rem 0 0.75rem;
+  opacity: 0.35;
+}
+
+.uc-phase-card {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 14px;
+  background: #fffaf7;
+  border: 1px dashed #f1d7de;
+}
+
+.uc-phase-card__title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.uc-phase-card__text {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.uc-player-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.uc-player-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 14px;
+  border: 1px solid #dcd3ff;
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.uc-player-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(112, 72, 232, 0.12);
+}
+
+.uc-player-btn:disabled,
+.uc-player-btn.is-out {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.uc-player-btn__name {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.uc-player-btn__status {
+  font-size: 0.68rem;
+  color: var(--text-soft);
+}
+
+.uc-result-card {
+  text-align: center;
+  margin: 0 auto 1rem;
+  max-width: 26rem;
+  padding: 1.35rem 1.15rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f3f0ff, #fff);
+  border: 1px solid #dcd3ff;
+}
+
+.uc-result-card--civilian {
+  background: linear-gradient(135deg, #e7f5ff, #fff);
+  border-color: #c5e4ff;
+}
+
+.uc-result-card--undercover {
+  background: linear-gradient(135deg, #fff0f3, #fff);
+  border-color: #ffd6e0;
+}
+
+.uc-result-card__title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.uc-result-card__text {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.uc-eliminated {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.uc-eliminated strong {
+  color: #7048e8;
+}
+
+body.is-loading .game-stage {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Mode picker */
+.uc-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.uc-mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.25rem 1rem;
+  border-radius: 16px;
+  border: 1px solid #dcd3ff;
+  background: linear-gradient(135deg, #faf8ff, #fff);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.uc-mode-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(112, 72, 232, 0.12);
+}
+
+.uc-mode-card__icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.uc-mode-card__title {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.uc-mode-card__desc {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+/* Room mode */
+.uc-room-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.uc-room-tab {
+  flex: 1;
+  padding: 0.65rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  color: var(--text-soft);
+}
+
+.uc-room-tab.is-active {
+  color: #7048e8;
+  background: #f3f0ff;
+  border-color: #dcd3ff;
+}
+
+.uc-room-tab-panel {
+  display: none;
+}
+
+.uc-room-tab-panel.is-active {
+  display: block;
+}
+
+.uc-room-code-box {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 1.15rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f3f0ff, #fff);
+  border: 1px solid #dcd3ff;
+}
+
+.uc-room-code-box__label {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  margin: 0 0 0.35rem;
+}
+
+.uc-room-code-box__code {
+  font-family: "Noto Serif SC", serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: #5f3dc4;
+  margin: 0 0 0.65rem;
+}
+
+.uc-room-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin: 0 0 0.85rem;
+}
+
+.uc-room-player-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.uc-room-player-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  margin-bottom: 0.45rem;
+}
+
+.uc-room-player-item__name {
+  font-weight: 600;
+}
+
+.uc-room-player-item__badge {
+  font-size: 0.72rem;
+  color: #7048e8;
+}
+
+.uc-room-player-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.uc-room-player-item--spectator {
+  opacity: 0.85;
+}
+
+.uc-kick-btn {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid #ffd6e0;
+  background: #fff5f5;
+  color: #c92a2a;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.uc-kick-btn:hover {
+  background: #ffe3e3;
+}
+
+.uc-spectate-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+  cursor: pointer;
+}
+
+.uc-spectate-check input {
+  margin-top: 0.2rem;
+}
+
+.uc-vote-timer {
+  margin: 0.65rem 0 0;
+  font-size: 0.88rem;
+  color: #7048e8;
+}
+
+.uc-vote-timer strong {
+  font-size: 1.15rem;
+}
+
+.uc-removed-card {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 22rem;
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff5f5, #fff);
+  border: 1px solid #ffd6e0;
+}
+
+.uc-removed-card__title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.55rem;
+  color: #c92a2a;
+}
+
+.uc-removed-card__text {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+  line-height: 1.65;
+  margin: 0 0 1rem;
+}
+
+.uc-room-sync {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin: 0 0 0.75rem;
+}
+
+.uc-room-code-input {
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.btn--sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 640px) {
+  .uc-player-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

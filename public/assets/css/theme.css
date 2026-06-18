@@ -280,6 +280,10 @@ html, body {
   background: linear-gradient(135deg, #ff922b, #ffc078);
 }
 
+.game-card__icon--purple {
+  background: linear-gradient(135deg, #7048e8, #9775fa);
+}
+
 .game-card__title {
   margin: 0 0 0.35rem;
   font-size: 1rem;

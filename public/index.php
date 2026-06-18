@@ -15,7 +15,7 @@ pg_render_header('即开即玩的聚会小游戏 · 返回 <a href="https://www.
         <div class="info-icon">🎲</div>
         <div>
             <h3>游戏类型</h3>
-            <p><strong>聚会破冰</strong><br>四款经典聚会游戏已上线，更多玩法持续更新</p>
+            <p><strong>聚会破冰</strong><br>五款经典聚会游戏已上线，更多玩法持续更新</p>
         </div>
     </div>
     <div class="info-card card">
@@ -67,6 +67,12 @@ pg_render_header('即开即玩的聚会小游戏 · 返回 <a href="https://www.
             <div class="game-card__icon game-card__icon--orange">弹</div>
             <h3 class="game-card__title">数字炸弹</h3>
             <p class="game-card__desc">猜数字踩炸弹：范围逐步缩小，踩中者接受惩罚。</p>
+            <span class="game-card__cta">开始游戏</span>
+        </a>
+        <a class="game-card" href="/games/undercover/">
+            <div class="game-card__icon game-card__icon--purple">底</div>
+            <h3 class="game-card__title">谁是卧底</h3>
+            <p class="game-card__desc">发词、描述、投票：找出隐藏卧底，经典推理聚会游戏。</p>
             <span class="game-card__cta">开始游戏</span>
         </a>
     </div>
