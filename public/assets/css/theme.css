@@ -276,6 +276,10 @@ html, body {
   background: linear-gradient(135deg, #4dabf7, #74c0fc);
 }
 
+.game-card__icon--orange {
+  background: linear-gradient(135deg, #ff922b, #ffc078);
+}
+
 .game-card__title {
   margin: 0 0 0.35rem;
   font-size: 1rem;
