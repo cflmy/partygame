@@ -1,0 +1,24 @@
+# Environment
+.env
+.env.*
+config/config.php
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# PHP
+vendor/
+composer.lock
+
+# Logs & cache
+*.log
+cache/
+tmp/
