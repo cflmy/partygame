@@ -41,6 +41,8 @@ function pg_render_head(string $title, string $description = '', array $extraCss
     <?php foreach ($extraCss as $css): ?>
     <link rel="stylesheet" href="<?= htmlspecialchars($css, ENT_QUOTES, 'UTF-8') ?>">
     <?php endforeach; ?>
+    <style>div[id^="maxkb-"] .maxkb-chat-button{bottom:auto!important;top:50%!important;transform:translateY(-50%)!important;right:10px!important;z-index:9999!important}div[id^="maxkb-"] #maxkb-chat-container{bottom:auto!important;top:50%!important;transform:translateY(-50%)!important;right:80px!important}div[id^="maxkb-"] .maxkb-tips{right:80px!important;bottom:auto!important;top:50%!important;transform:translateY(-50%)!important}div[id^="maxkb-"] .maxkb-tips .maxkb-arrow{right:-5px!important;left:auto!important;bottom:auto!important;top:50%!important;transform:translateY(-50%) rotate(45deg)!important}@media only screen and (max-width:768px){div[id^="maxkb-"] .maxkb-chat-button{top:auto!important;bottom:20px!important;right:20px!important;transform:none!important}div[id^="maxkb-"] #maxkb-chat-container{top:auto!important;bottom:0!important;right:0!important;transform:none!important}}</style>
+    <script async defer src="https://ai.cflmy.cn/chat/api/embed?protocol=https&host=ai.cflmy.cn&token=1921199f49ee8ac7"></script>
 </head>
 <body>
     <canvas id="bgCanvas" aria-hidden="true"></canvas>
